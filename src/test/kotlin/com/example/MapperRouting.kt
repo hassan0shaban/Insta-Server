@@ -1,12 +1,13 @@
 package com.example
 
 import com.example.model.User
-import io.ktor.http.*
 import io.ktor.application.*
-import kotlin.test.*
+import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
+import kotlin.test.Test
+import kotlin.test.assertNotEquals
 
 class MapperRouting {
     @Test
@@ -23,6 +24,7 @@ class MapperRouting {
                             user_image_url = "",
                             uid = null,
                             username = "",
+                            password = "12345678"
                         )
                     ).toString().also { println(it) }
                 )

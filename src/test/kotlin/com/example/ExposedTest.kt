@@ -1,11 +1,10 @@
 package com.example
 
-import com.example.repo.UserRepositoryImpl
-import com.example.model.User
 import io.ktor.application.*
 import io.ktor.http.*
-import kotlin.test.*
 import io.ktor.server.testing.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ExposedTest {
     @Test
