@@ -6,12 +6,20 @@ object Routing {
 }
 
 object Parameters {
+    const val ACCESS_TOKEN: String = "access_token"
+    const val UID: String = "uid"
     const val Login_Method = "method"
     const val Signup_Method = "method"
+    const val USERNAME = "username"
+    const val PID = "pid"
 }
 
 object LoginMethods {
     const val EMAIL = "email"
     const val FACEBOOK = "facebook"
     const val Google = "google"
+}
+
+object AuthenticationParameters {
+    const val USERNAME = "username"
 }

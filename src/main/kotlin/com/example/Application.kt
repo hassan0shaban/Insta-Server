@@ -2,11 +2,9 @@ package com.example
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.example.AuthMethod.method
 import com.example.di.mainModule
-import com.example.route.feedRouting
-import com.example.route.loginRouting
-import com.example.route.signupRouting
-import com.example.route.userRouting
+import com.example.route.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -27,7 +25,7 @@ fun Application.module() {
     val myRealm = environment.config.property("jwt.realm").getString()
 
     install(Authentication) {
-        jwt("auth-jwt") {
+        jwt(method) {
             realm = myRealm
             verifier(
                 JWT.require(Algorithm.HMAC256(secret))
@@ -37,7 +35,7 @@ fun Application.module() {
             )
 
             validate { credential ->
-                if (credential.payload.getClaim("email").asString() != "") {
+                if (credential.payload.getClaim(AuthenticationParameters.USERNAME).asString() != "") {
                     JWTPrincipal(credential.payload)
                 } else {
                     null
@@ -46,9 +44,15 @@ fun Application.module() {
         }
     }
     routing {
-        userRouting()
-        signupRouting()
+        postRouting(secret, issuer, audience)
+        feedRouting(secret, issuer, audience)
         loginRouting(secret = secret, issuer = issuer, audience = audience)
         feedRouting(secret = secret, issuer = issuer, audience = audience)
+        userRouting(secret = secret, issuer = issuer, audience = audience)
+        signupRouting()
     }
+}
+
+object AuthMethod {
+    const val method = "auth-jwt"
 }

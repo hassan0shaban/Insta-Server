@@ -1,14 +1,19 @@
 package com.example.service
 
-import com.example.dp.table.UserTable
+
+import com.example.model.Post
+import com.example.model.PostDetails
 import com.example.model.User
+import com.example.repo.PostRepository
 import com.example.repo.UserRepository
+import com.example.request.CreateUserByEmailRequest
 import com.example.request.UpdateUsernameRequest
 
 class UserService(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val postRepository: PostRepository
 ) {
-    suspend fun updateUsername(
+    fun updateUsername(
         updateUsernameRequest: UpdateUsernameRequest
     ): Boolean = try {
         updateUsernameRequest.let {
@@ -23,6 +28,18 @@ class UserService(
         return userRepository.getUser(username)
     }
 
-    fun createUser(user: User): Boolean =
-        userRepository.insertUser(user = user) != null
+    fun insertUser(request: CreateUserByEmailRequest): Int? =
+        userRepository.insertUser(email = request.email, password = request.password)
+
+    fun getUserByEmail(email: String): User? =
+        userRepository.getUserByEmail(email)
+
+    fun login(email: String, password: String): String =
+        userRepository.login(email, password)
+
+
+    fun getUser(email: String, password: String): User? =
+        userRepository.getUser(email, password)
+
 }
+

@@ -1,4 +1,4 @@
-package com.harera.insta.data.dp.utils
+package com.example.dp.utils
 
 object TableNames {
     const val Post = "Post"

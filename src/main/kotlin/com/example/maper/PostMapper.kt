@@ -2,14 +2,14 @@ package com.example.maper
 
 import com.example.dp.table.PostTable
 import com.example.dp.table.UserTable
+import com.example.model.PostDetails
 import com.example.model.User
-import com.example.response.Post
 import org.jetbrains.exposed.sql.ResultRow
 
 object PostMapper {
 
-    fun postFromResultRow(resultRow: ResultRow): Post =
-        Post(
+    fun postFromResultRow(resultRow: ResultRow): PostDetails =
+        PostDetails(
             pid = resultRow[PostTable.pid],
             time = resultRow[PostTable.time],
             caption = resultRow[PostTable.caption],

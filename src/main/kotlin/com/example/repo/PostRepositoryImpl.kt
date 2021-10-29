@@ -1,16 +1,24 @@
 package com.example.repo
 
 import com.example.dp.table.*
-import com.example.maper.Mapper
 import com.example.maper.Mapper.getCommentsFromResultRow
 import com.example.maper.Mapper.getLikesFromResultRow
 import com.example.maper.PostMapper
 import com.example.model.Comment
 import com.example.model.Like
-import com.example.response.Post
+import com.example.model.PostDetails
+import com.example.repo.Constants.UserPostsLimit
+import com.example.request.PostRequest
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.joda.time.DateTime
+import java.sql.Timestamp
+import java.time.Instant
+
+object Constants {
+    const val UserPostsLimit = 15
+}
 
 class PostRepositoryImpl(private val database: Database) : PostRepository {
 
@@ -37,49 +45,23 @@ class PostRepositoryImpl(private val database: Database) : PostRepository {
                 getLikesFromResultRow(it)
             }
 
-    override fun getUserPosts(username: String): List<Post> =
+    override fun getUserPosts(username: String): List<PostDetails> =
         PostTable.innerJoin(UserTable)
             .select(
                 where = {
                     PostTable.username eq username
                 }
             )
-            .limit(8)
+            .limit(UserPostsLimit)
             .map {
                 PostMapper.postFromResultRow(it)
             }
 
-    override fun getFeedPosts(username: String): List<Post> {
-        return transaction {
-            val postList = arrayListOf<Post>()
-
-            ConnectionTable
-                .select(
-                    where = {
-                        ConnectionTable.followerUid eq username
-                    }
-                )
-                .map {
-                    Mapper.connectionsFromResultRow(it)
-                }.map {
-                    getUserPosts(it.uid)
-                }.forEach {
-                    it.forEach { post ->
-                        getPostComments(post.pid).let { comments ->
-                            post.comments = comments
-                        }
-                    }
-
-                    it.forEach { post ->
-                        getPostLikes(post.pid).let { likes ->
-                            post.likes = likes
-                        }
-                    }
-
-                    postList += it
-                }
-
-            return@transaction postList
-        }
-    }
+    override fun insertPost(postRequest: PostRequest, username: String): Int? =
+        PostTable.insert {
+            it[PostTable.username] = username
+            it[imageUrl] = postRequest.imageUrl
+            it[caption] = postRequest.caption
+            it[time] = DateTime.now()
+        }.getOrNull(PostTable.pid)
 }
