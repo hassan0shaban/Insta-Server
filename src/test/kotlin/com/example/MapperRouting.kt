@@ -20,9 +20,9 @@ class MapperRouting {
                             name = "hassan",
                             bio = "",
                             email = "",
-                            phone_number = "",
-                            user_image_url = "",
-                            uid = null,
+                            phoneNumber = "",
+                            userImageUrl = "",
+                            uid = 123,
                             username = "",
                             password = "12345678"
                         )
