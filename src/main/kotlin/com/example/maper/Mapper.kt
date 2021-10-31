@@ -1,39 +1,34 @@
 package com.example.maper
 
-import com.example.dp.table.CommentTable
-import com.example.dp.table.ConnectionTable
-import com.example.dp.table.LikeTable
-import com.example.dp.table.UserTable
-import com.example.model.Comment
-import com.example.model.Connection
-import com.example.model.Like
-import com.example.model.User
+import com.example.dp.table.*
+import com.example.model.*
+import com.example.utils.TimeFormat
 import org.jetbrains.exposed.sql.ResultRow
 
 object Mapper {
     fun userFromResultRow(resultRow: ResultRow): User {
         return User(
-            name = resultRow[UserTable.name],
+            name = resultRow[UserTable.name]!!,
             password = resultRow[UserTable.password],
             bio = resultRow[UserTable.bio],
-            username = resultRow[UserTable.userName],
+            username = resultRow[UserTable.username],
             uid = resultRow[UserTable.uid],
-            user_image_url = resultRow[UserTable.user_image_url],
+            userImageUrl = resultRow[UserTable.user_image_url],
             email = resultRow[UserTable.email],
-            phone_number = resultRow[UserTable.phoneNumber],
+            phoneNumber = resultRow[UserTable.phoneNumber],
         )
     }
 
-    fun getConnectionFromResultRow(resultRow: ResultRow): Connection =
-        Connection(
-            followerUid = resultRow[ConnectionTable.followerUid],
-            uid = resultRow[ConnectionTable.uid],
-            time = resultRow[ConnectionTable.time],
+    fun geFollowerFromResultRow(resultRow: ResultRow): Follower =
+        Follower(
+            followerUid = resultRow[FollowerTable.followerUid],
+            username = resultRow[FollowerTable.username],
+            time = resultRow[FollowerTable.time].let { TimeFormat.dateTimeToString(it) },
         )
 
     fun getCommentsFromResultRow(resultRow: ResultRow): Comment =
         Comment(
-            uid = resultRow[CommentTable.uid],
+            username = resultRow[CommentTable.username],
             time = resultRow[CommentTable.time],
             content = resultRow[CommentTable.commentContent],
             pid = resultRow[CommentTable.pid]
@@ -41,8 +36,22 @@ object Mapper {
 
     fun getLikesFromResultRow(resultRow: ResultRow): Like =
         Like(
-            uid = resultRow[LikeTable.uid],
+            username = resultRow[LikeTable.username],
             time = resultRow[LikeTable.time],
             pid = resultRow[LikeTable.pid]
+        )
+
+    fun followRequestFromResultRow(resultRow: ResultRow)  =
+        FollowRequest(
+            username = resultRow[FollowRequestTable.username],
+            followerUsername= resultRow[FollowRequestTable.followerUsername],
+            time = resultRow[FollowRequestTable.time].let { TimeFormat.dateTimeToString(it) },
+        )
+
+    fun followerFromResultRow(resultRow: ResultRow) =
+        Follower(
+            username = resultRow[FollowerTable.username],
+            followerUid= resultRow[FollowerTable.followerUid],
+            time = resultRow[FollowerTable.time].let { TimeFormat.dateTimeToString(it) },
         )
 }
