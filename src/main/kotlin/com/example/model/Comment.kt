@@ -5,6 +5,6 @@ import org.joda.time.DateTime
 data class Comment(
     val pid: Int,
     val content: String,
-    val uid: Int,
+    val username: String,
     val time: DateTime
 )

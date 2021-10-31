@@ -1,12 +1,12 @@
 package com.example.model
 
 data class User(
-    val uid: Int? = null,
-    val name: String?,
-    val username: String? = null,
+    val uid: Int,
+    val name: String,
+    val username: String,
     val password: String,
-    val user_image_url: String? = null,
+    val userImageUrl: String? = null,
     val bio: String? = null,
-    val email: String? = null,
-    val phone_number: String? = null,
+    val email: String,
+    val phoneNumber: String? = null,
 )

@@ -4,6 +4,6 @@ import org.joda.time.DateTime
 
 data class Like(
     val pid: Int,
-    val uid: Int,
+    val username: String,
     val time: DateTime
 )
