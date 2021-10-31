@@ -3,6 +3,7 @@ package com.example.route
 object Routing {
     const val SIGNUP = "/signup"
     const val LOGIN = "/login"
+    const val USER = "/User"
 }
 
 object Parameters {

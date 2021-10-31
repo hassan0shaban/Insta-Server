@@ -93,7 +93,8 @@ class UserRoutingTest : KoinTest {
                     GsonBuilder().create().toJsonTree(
                         CreateUserByEmailRequest(
                             email = "hassan",
-                            password = "12345678"
+                            password = "12345678",
+                            name = ""
                         )
                     ).toString().also { println(it) }
                 )

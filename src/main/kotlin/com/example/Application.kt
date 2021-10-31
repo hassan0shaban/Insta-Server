@@ -16,7 +16,11 @@ import org.koin.ktor.ext.Koin
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 fun Application.module() {
-    install(ContentNegotiation) { gson { } }
+    install(ContentNegotiation) {
+        gson {
+            setPrettyPrinting()
+        }
+    }
     install(Koin) { modules(mainModule) }
 
     val secret = environment.config.property("jwt.secret").getString()

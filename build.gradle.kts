@@ -37,6 +37,12 @@ dependencies {
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
 
+    implementation("io.ktor:ktor-auth:$ktor_version")
+    implementation("io.ktor:ktor-auth-jwt:$ktor_version")
+
+    implementation("io.ktor:ktor-client-cio:$ktor_version")
+
+    testImplementation("com.google.truth:truth:1.1.3")
     //exposed
     implementation("org.jetbrains.exposed:exposed:$exposed_version")
     //connector

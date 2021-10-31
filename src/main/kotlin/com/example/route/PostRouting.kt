@@ -33,14 +33,35 @@ fun Route.postRouting(secret: String, issuer: String, audience: String) {
     }
 
     authenticate(AuthMethod.method) {
+        get("/profile") {
+//            val username = call.parameters[USERNAME] ?: kotlin.run {
+//                call.respond(message = "username is not correct", status = HttpStatusCode.BadRequest)
+//                return@get
+//            }
+            val principal = call.principal<JWTPrincipal>()
+            val username = principal!!.payload.getClaim(AuthenticationParameters.USERNAME).asString()
+
+            call.respond(
+                message = postService.getUserPosts(username),
+                status = HttpStatusCode.OK
+            )
+        }
+    }
+
+    authenticate(AuthMethod.method) {
         get("/posts/{$PID}") {
-            val username = call.parameters[PID] ?: kotlin.run {
+            val pid = call.parameters[PID]?.toInt() ?: kotlin.run {
                 call.respond(message = "username is not correct", status = HttpStatusCode.BadRequest)
                 return@get
             }
 
+            val post = postService.getPost(pid) ?: kotlin.run {
+                call.respond(message = "cannot insert post", status = HttpStatusCode.BadRequest)
+                return@get
+            }
+
             call.respond(
-                message = postService.getUserPosts(username),
+                message = post,
                 status = HttpStatusCode.OK
             )
         }
@@ -84,13 +105,13 @@ fun Route.postRouting(secret: String, issuer: String, audience: String) {
             val principal = call.principal<JWTPrincipal>()
             val username = principal!!.payload.getClaim(AuthenticationParameters.USERNAME).asString()
 
-            postService.insertPost(post, username) ?: kotlin.run {
+            val pid = postService.insertPost(post, username) ?: kotlin.run {
                 call.respond(message = "cannot create post", status = HttpStatusCode.ExpectationFailed)
                 return@post
             }
 
             call.respond(
-                message = "success",
+                message = "$pid",
                 status = HttpStatusCode.OK
             )
         }
