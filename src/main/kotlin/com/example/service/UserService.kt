@@ -1,8 +1,7 @@
 package com.example.service
 
 
-import com.example.model.Post
-import com.example.model.PostDetails
+import com.example.model.Follower
 import com.example.model.User
 import com.example.repo.PostRepository
 import com.example.repo.UserRepository
@@ -29,7 +28,7 @@ class UserService(
     }
 
     fun insertUser(request: CreateUserByEmailRequest): Int? =
-        userRepository.insertUser(email = request.email, password = request.password)
+        userRepository.insertUser(email = request.email, password = request.password, name = request.name)
 
     fun getUserByEmail(email: String): User? =
         userRepository.getUserByEmail(email)
@@ -41,5 +40,40 @@ class UserService(
     fun getUser(email: String, password: String): User? =
         userRepository.getUser(email, password)
 
-}
+    fun insertFollowRelation(followerUsername: String, username: String): String? {
+        userRepository.addConnection(
+            followerUid = username,
+            username = followerUsername
+        ) ?: kotlin.run {
+            return null
+        }
 
+        return userRepository.addConnection(
+            followerUid = followerUsername,
+            username = username
+        ) ?: kotlin.run {
+            return null
+        }
+    }
+
+    fun getConnections(username: String) =
+        userRepository.getConnections(username = username)
+
+    fun addFollowRequest(username: String, followerUsername: String) =
+        userRepository.insertFollowRequest(
+            followerUid = followerUsername,
+            username = username
+        )
+
+    fun deleteFollowRequest(followerUsername: String, username: String): Int =
+        userRepository.deleteFollowRequest(
+            followerUid = followerUsername,
+            username = username
+        )
+
+    fun getFollowRequests(username: String): List<com.example.model.FollowRequest> =
+        userRepository.getFollowRequests(username)
+
+    fun getFollowers(username: String): List<Follower> =
+        userRepository.getFollowers(username)
+}

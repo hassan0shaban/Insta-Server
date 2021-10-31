@@ -39,6 +39,7 @@ fun Route.signupRouting() {
             return@post
         }
 
+        call.respond(message = username, status = HttpStatusCode.OK)
     }
 
     post("$SIGNUP/$FACEBOOK") {
