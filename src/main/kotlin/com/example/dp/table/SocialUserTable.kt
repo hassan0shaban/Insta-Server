@@ -2,11 +2,12 @@ package com.example.dp.table
 
 import com.example.dp.utils.TableNames
 import com.example.dp.utils.UserFields
+import com.example.model.User
 import org.jetbrains.exposed.sql.Table
 
 object SocialUserTable : Table(TableNames.User) {
     val uid = integer(UserFields.uid).primaryKey().autoIncrement()
-    val userName = varchar(UserFields.username, 80).primaryKey().default("null")
+    val username = varchar(UserFields.username, 80).primaryKey()
     val token = varchar(UserFields.token, 50)
     val email = varchar(UserFields.email, 120).nullable()
     val phoneNumber = varchar(UserFields.phone_number, 45).nullable()
