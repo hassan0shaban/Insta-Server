@@ -4,6 +4,6 @@ data class Post(
     val pid: Int,
     val caption: String,
     val username: String,
-    val imageUrl: String,
+    var imageUrl: String,
     val time: String
 )

@@ -12,6 +12,7 @@ object Parameters {
     const val Login_Method = "method"
     const val Signup_Method = "method"
     const val USERNAME = "username"
+    const val IMAGE_NAME = "image_name"
     const val PID = "pid"
 }
 

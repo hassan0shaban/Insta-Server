@@ -22,8 +22,8 @@ class PostService(
         false
     }
 
-    fun insertPost(postRequest: PostRequest, username: String): Int? =
-        postRepository.insertPost(postRequest, username)
+    fun insertPost(caption: String, imageUrl: String, username: String): Int? =
+        postRepository.insertPost(caption, imageUrl, username)
 
     fun getUserPosts(username: String): ArrayList<PostResponse> {
         val posts = arrayListOf<PostResponse>()
@@ -75,5 +75,8 @@ class PostService(
             }
         return posts
     }
+
+    fun updatePostImageUrl(pid: Int, imageUrl: String): Int =
+        postRepository.updatePostImageUrl(pid, imageUrl)
 }
 

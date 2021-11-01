@@ -6,5 +6,5 @@ data class PostRequest(
     @SerializedName("caption")
     val caption: String,
     @SerializedName("imageUrl")
-    val imageUrl: String,
+    val imageUrl: String = "imageUrl",
 )
