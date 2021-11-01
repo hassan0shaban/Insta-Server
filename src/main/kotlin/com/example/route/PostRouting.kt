@@ -1,18 +1,21 @@
 package com.example.route
 
 import com.example.AuthMethod
-import com.example.request.PostRequest
+import com.example.route.Parameters.IMAGE_NAME
 import com.example.route.Parameters.PID
 import com.example.route.Parameters.USERNAME
 import com.example.service.PostService
+import com.example.utils.Paths.POSTS_IMAGES_PATH
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import org.koin.ktor.ext.inject
+import java.io.File
 
 fun Route.postRouting(secret: String, issuer: String, audience: String) {
 
@@ -61,15 +64,47 @@ fun Route.postRouting(secret: String, issuer: String, audience: String) {
             }
 
             call.respond(
-                message = post,
+                message = post
+                    .post.apply {
+//                    TODO change base URL
+                        imageUrl = "http://0.0.0.0:8080/$imageUrl"
+                    },
                 status = HttpStatusCode.OK
             )
         }
     }
 
     authenticate(AuthMethod.method) {
+        get("/images/posts/{$IMAGE_NAME}") {
+            val imageUrl = call.parameters[IMAGE_NAME] ?: kotlin.run {
+                call.respond(message = "post id must be passed", status = HttpStatusCode.BadRequest)
+                return@get
+            }
+
+            call.response.header(
+                name = HttpHeaders.ContentDisposition,
+                value = ContentDisposition
+                    .Attachment
+                    .withParameter(ContentDisposition.Parameters.FileName, imageUrl)
+                    .toString()
+            )
+
+            call.respondFile(
+                File("$POSTS_IMAGES_PATH/$imageUrl"),
+            )
+
+//            call.respondBytes(
+//                File("$POSTS_IMAGES_PATH/$imageUrl").readBytes(),
+//                status = HttpStatusCode.OK,
+//                contentType = ContentType.Image.JPEG
+//            )
+        }
+    }
+
+
+    authenticate(AuthMethod.method) {
         get("/posts/{$PID}/comments") {
-            val pid = call.parameters[PID]?.toInt()  ?: kotlin.run {
+            val pid = call.parameters[PID]?.toInt() ?: kotlin.run {
                 call.respond(message = "post id must be passed", status = HttpStatusCode.BadRequest)
                 return@get
             }
@@ -97,23 +132,44 @@ fun Route.postRouting(secret: String, issuer: String, audience: String) {
 
     authenticate(AuthMethod.method) {
         post("/post") {
-            val post = call.receiveOrNull<PostRequest>() ?: kotlin.run {
-                call.respond(message = "post must be passed", status = HttpStatusCode.BadRequest)
+            var imageBytes: ByteArray? = null
+            var caption: String? = null
+            call.receiveMultipart().forEachPart { part ->
+                when (part) {
+                    is PartData.FormItem -> {
+                        caption = part.value
+                    }
+                    is PartData.FileItem -> {
+                        imageBytes = part.streamProvider().readBytes()
+                    }
+                }
+            }
+
+            if (imageBytes == null || caption == null) {
+                call.respond(message = "uncompleted info", status = HttpStatusCode.BadRequest)
                 return@post
             }
 
             val principal = call.principal<JWTPrincipal>()
             val username = principal!!.payload.getClaim(AuthenticationParameters.USERNAME).asString()
 
-            val pid = postService.insertPost(post, username) ?: kotlin.run {
+            val pid = postService.insertPost(caption!!, "imageUrl", username) ?: kotlin.run {
                 call.respond(message = "cannot create post", status = HttpStatusCode.ExpectationFailed)
                 return@post
             }
 
-            call.respond(
-                message = "$pid",
-                status = HttpStatusCode.OK
-            )
+            val imageUrl = "$POSTS_IMAGES_PATH/$pid.jpg"
+            File(imageUrl).writeBytes(imageBytes!!)
+
+            postService.updatePostImageUrl(pid, imageUrl).let {
+                if (it > 0)
+                    call.respond(
+                        message = "$pid",
+                        status = HttpStatusCode.OK
+                    )
+                else
+                    call.respond(message = "cannot create post", status = HttpStatusCode.ExpectationFailed)
+            }
         }
     }
 }

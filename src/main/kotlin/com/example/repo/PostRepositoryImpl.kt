@@ -70,12 +70,23 @@ class PostRepositoryImpl(private val database: Database) : PostRepository {
                 }
         }
 
-    override fun insertPost(postRequest: PostRequest, username: String): Int? =
+    override fun updatePostImageUrl(pid: Int, imageUrl: String) =
+        transaction {
+            PostTable.update(
+                where = {
+                    PostTable.pid eq pid
+                },
+            ) {
+                it.set(this.imageUrl, imageUrl)
+            }
+        }
+
+    override fun insertPost(caption: String, imageUrl: String, username: String): Int? =
         transaction {
             PostTable.insert {
                 it.set(this.username, username)
-                it.set(this.imageUrl, postRequest.imageUrl)
-                it.set(this.caption, postRequest.caption)
+                it.set(this.imageUrl, imageUrl)
+                it.set(this.caption, caption)
                 it.set(this.time, DateTime.now())
             }.getOrNull(PostTable.pid)
         }
