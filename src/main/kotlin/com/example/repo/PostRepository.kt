@@ -1,13 +1,12 @@
 package com.example.repo
 
 import com.example.model.Comment
-import com.example.model.Like
+import com.example.response.LikeResponse
 import com.example.model.Post
-import com.example.request.PostRequest
 
 interface PostRepository {
     fun getPostComments(pid: Int): List<Comment>
-    fun getPostLikes(pid: Int): List<Like>
+    fun getPostLikes(pid: Int): List<LikeResponse>
     fun insertPost(caption: String, imageUrl: String, username: String): Int?
     fun getUserPosts(username: String, limit: Int = Constants.UserPostsLimit): List<Post>
     fun getPost(pid: Int): Post?

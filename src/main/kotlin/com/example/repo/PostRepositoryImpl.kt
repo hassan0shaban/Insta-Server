@@ -2,13 +2,12 @@ package com.example.repo
 
 import com.example.dp.table.*
 import com.example.maper.Mapper.getCommentsFromResultRow
-import com.example.maper.Mapper.getLikesFromResultRow
+import com.example.maper.Mapper.getLikeFromResultRow
 import com.example.maper.PostMapper
 import com.example.model.Comment
-import com.example.model.Like
+import com.example.response.LikeResponse
 import com.example.model.Post
 import com.example.repo.Constants.UserPostsLimit
-import com.example.request.PostRequest
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
@@ -29,7 +28,7 @@ class PostRepositoryImpl(private val database: Database) : PostRepository {
                 }
         }
 
-    override fun getPostLikes(pid: Int): List<Like> =
+    override fun getPostLikes(pid: Int): List<LikeResponse> =
         transaction {
             LikeTable
                 .select(
@@ -38,7 +37,7 @@ class PostRepositoryImpl(private val database: Database) : PostRepository {
                     }
                 )
                 .map {
-                    getLikesFromResultRow(it)
+                    getLikeFromResultRow(it)
                 }
         }
 

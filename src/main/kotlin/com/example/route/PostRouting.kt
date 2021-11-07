@@ -17,7 +17,7 @@ import io.ktor.routing.*
 import org.koin.ktor.ext.inject
 import java.io.File
 
-fun Route.postRouting(secret: String, issuer: String, audience: String) {
+fun Route.postRouting() {
 
     val postService: PostService by inject()
 
@@ -27,22 +27,6 @@ fun Route.postRouting(secret: String, issuer: String, audience: String) {
                 call.respond(message = "username is not correct", status = HttpStatusCode.BadRequest)
                 return@get
             }
-
-            call.respond(
-                message = postService.getUserPosts(username),
-                status = HttpStatusCode.OK
-            )
-        }
-    }
-
-    authenticate(AuthMethod.method) {
-        get("/profile") {
-//            val username = call.parameters[USERNAME] ?: kotlin.run {
-//                call.respond(message = "username is not correct", status = HttpStatusCode.BadRequest)
-//                return@get
-//            }
-            val principal = call.principal<JWTPrincipal>()
-            val username = principal!!.payload.getClaim(AuthenticationParameters.USERNAME).asString()
 
             call.respond(
                 message = postService.getUserPosts(username),
@@ -64,11 +48,10 @@ fun Route.postRouting(secret: String, issuer: String, audience: String) {
             }
 
             call.respond(
-                message = post
-                    .post.apply {
+                message = post.apply {
 //                    TODO change base URL
-                        imageUrl = "http://0.0.0.0:8080/$imageUrl"
-                    },
+                    post.post.imageUrl = "http://localhost:8080/${post.post.imageUrl}"
+                },
                 status = HttpStatusCode.OK
             )
         }
@@ -92,12 +75,6 @@ fun Route.postRouting(secret: String, issuer: String, audience: String) {
             call.respondFile(
                 File("$POSTS_IMAGES_PATH/$imageUrl"),
             )
-
-//            call.respondBytes(
-//                File("$POSTS_IMAGES_PATH/$imageUrl").readBytes(),
-//                status = HttpStatusCode.OK,
-//                contentType = ContentType.Image.JPEG
-//            )
         }
     }
 
@@ -171,5 +148,14 @@ fun Route.postRouting(secret: String, issuer: String, audience: String) {
                     call.respond(message = "cannot create post", status = HttpStatusCode.ExpectationFailed)
             }
         }
+    }
+
+    get("user/{username}/posts") {
+        val username = call.parameters.get("username")
+        if (username == null)
+            call.respond(message = "null", status = HttpStatusCode.BadRequest).also { return@get }
+
+        val posts = postService.getUserPosts(username!!)
+        call.respond(message = posts, status = HttpStatusCode.OK)
     }
 }

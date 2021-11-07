@@ -3,8 +3,8 @@ package com.example.service
 import com.example.model.*
 import com.example.repo.PostRepository
 import com.example.repo.UserRepository
-import com.example.request.PostRequest
 import com.example.request.UpdateUsernameRequest
+import com.example.response.LikeResponse
 import com.example.response.PostResponse
 
 class PostService(
@@ -35,7 +35,7 @@ class PostService(
                 val likes = postRepository.getPostLikes(post.pid)
                 posts.add(
                     PostResponse(
-                        likes = likes,
+                        likeResponses = likes,
                         comments = comments,
                         user = user!!,
                         post = post
@@ -53,14 +53,14 @@ class PostService(
                 val comments = postRepository.getPostComments(pid)
                 val user = userRepository.getUser(post.username)
                 return@let PostResponse(
-                    likes = likes,
+                    likeResponses = likes,
                     comments = comments,
                     user = user!!,
                     post = post
                 )
             }
 
-    fun getLikes(pid: Int): List<Like> =
+    fun getLikes(pid: Int): List<LikeResponse> =
         postRepository.getPostLikes(pid)
 
     fun getPostComments(pid: Int): List<Comment> =

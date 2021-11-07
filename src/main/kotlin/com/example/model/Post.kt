@@ -5,5 +5,5 @@ data class Post(
     val caption: String,
     val username: String,
     var imageUrl: String,
-    val time: String
+    val time: String,
 )
