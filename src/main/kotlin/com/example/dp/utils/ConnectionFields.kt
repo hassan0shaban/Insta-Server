@@ -1,7 +1,7 @@
 package com.example.dp.utils
 
 object ConnectionFields {
-    const val followerUid = "follower_uid"
-    const val uid = "uid"
+    const val user1 = "user1"
+    const val user2 = "user2"
     const val time = "time"
 }
