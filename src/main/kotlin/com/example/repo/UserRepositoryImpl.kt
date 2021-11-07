@@ -1,7 +1,8 @@
 package com.example.repo
 
 import com.example.dp.table.FollowRequestTable
-import com.example.dp.table.FollowerTable
+import com.example.dp.table.ConnectionsTable
+import com.example.dp.table.LikeTable
 import com.example.dp.table.UserTable
 import com.example.maper.Mapper
 import com.example.maper.Mapper.userFromResultRow
@@ -9,6 +10,7 @@ import com.example.model.Follower
 import com.example.model.FollowRequest
 import com.example.model.User
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
@@ -38,10 +40,10 @@ class UserRepositoryImpl(
 
     override fun getConnections(username: String): List<Follower> =
         transaction {
-            FollowerTable
+            ConnectionsTable
                 .select(
                     where = {
-                        FollowerTable.followerUid eq username
+                        ConnectionsTable.user1 eq username
                     }
                 )
                 .map {
@@ -51,11 +53,11 @@ class UserRepositoryImpl(
 
     override fun addConnection(followerUid: String, username: String) =
         transaction {
-            FollowerTable.insert {
-                it[this.followerUid] = followerUid
-                it[this.username] = username
+            ConnectionsTable.insert {
+                it[this.user1] = followerUid
+                it[this.user2] = username
                 it[this.time] = DateTime()
-            }.getOrNull(FollowerTable.username)
+            }.getOrNull(ConnectionsTable.user2)
         }
 
     override fun insertFollowRequest(followerUid: String, username: String) =
@@ -89,12 +91,33 @@ class UserRepositoryImpl(
 
     override fun getFollowers(username: String): List<Follower> =
         transaction {
-            FollowerTable
+            ConnectionsTable
                 .select(
-                    where = { FollowerTable.username eq username }
+                    where = { ConnectionsTable.user2 eq username }
                 )
                 .map {
                     Mapper.followerFromResultRow(it)
+                }
+        }
+
+    override suspend fun deleteLike(pid: Int, username: String): Result<Int> = kotlin.runCatching {
+        transaction {
+            LikeTable
+                .deleteWhere {
+                    (LikeTable.pid eq pid) and (LikeTable.username eq username)
+                }
+        }
+    }
+
+    override fun updateName(username: String, name: String): Int =
+        transaction {
+            UserTable
+                .update(
+                    where = {
+                        (UserTable.username eq username)
+                    }
+                ) {
+                    it.set(UserTable.name, name)
                 }
         }
 

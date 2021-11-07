@@ -17,4 +17,6 @@ interface UserRepository {
     fun deleteFollowRequest(followerUid: String, username: String): Int
     fun getFollowRequests(username: String): List<com.example.model.FollowRequest>
     fun getFollowers(username: String): List<Follower>
+    suspend fun deleteLike(pid: Int, username: String): Result<Int>
+    fun updateName(username: String, name: String): Int
 }

@@ -6,6 +6,7 @@ import com.example.model.User
 import com.example.repo.PostRepository
 import com.example.repo.UserRepository
 import com.example.request.CreateUserByEmailRequest
+import com.example.request.LikeRequest
 import com.example.request.UpdateUsernameRequest
 
 class UserService(
@@ -13,17 +14,11 @@ class UserService(
     private val postRepository: PostRepository
 ) {
     fun updateUsername(
-        updateUsernameRequest: UpdateUsernameRequest
-    ): Boolean = try {
-        updateUsernameRequest.let {
-            userRepository.updateUsername(it.oldUsername, it.newUsername) > 0
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        false
-    }
+        oldUsername: String,
+        newUsername: String
+    ) = userRepository.updateUsername(oldUsername, newUsername) > 0
 
-    suspend fun getUser(username: String): User? {
+    fun getUser(username: String): User? {
         return userRepository.getUser(username)
     }
 
@@ -76,4 +71,19 @@ class UserService(
 
     fun getFollowers(username: String): List<Follower> =
         userRepository.getFollowers(username)
+
+   suspend fun deleteLike(likeRequest: LikeRequest, username: String) : Boolean {
+        userRepository
+            .deleteLike(likeRequest.pid, username)
+            .onSuccess {
+                return it > 0
+            }
+            .onFailure {
+                return false
+            }
+        return false
+    }
+
+    fun updateName(username: String, name: String): Boolean =
+        userRepository.updateName(username, name) > 0
 }

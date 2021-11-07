@@ -2,6 +2,7 @@ package com.example.dp.utils
 
 
 object UserFields {
+    const val musername = "m_username"
     const val uid = "uid"
     const val name = "name"
     const val password = "password"

@@ -1,5 +1,5 @@
 package com.example.request
 
-data class FollowRequest(
+data class Username(
     val username: String
 )
