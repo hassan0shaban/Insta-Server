@@ -26,17 +26,32 @@ create table if not exists user
     constraint `PRIMARY`
         primary key (uid, email, username)
 );
+create index username_user_idx
+    on user (username);
+
+SET FOREIGN_KEY_CHECKS=1;
 
 create table if not exists connection
 (
-    follower_uid varchar(80) not null,
-    uid          varchar(80) not null,
-    time         timestamp   null,
-    constraint connection_1_user
-        foreign key (follower_uid) references user (username),
-    constraint connection_2_user
-        foreign key (uid) references user (username)
+    user1 varchar(80) not null,
+    user2 varchar(80) not null,
+    time  timestamp   null,
+    constraint user1_user
+        foreign key (user1)
+            references user (username)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION,
+    constraint user2_user
+        foreign key (user2)
+            references user (username)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION
 );
+create index user1_user_idx
+    on connection (user1);
+
+create index user2_user_idx
+    on connection (user2);
 
 create table if not exists connectionrequest
 (
@@ -44,9 +59,15 @@ create table if not exists connectionrequest
     username          varchar(80) not null,
     time              datetime    null,
     constraint connection_request_follower_username
-        foreign key (follower_username) references user (username),
+        foreign key (follower_username)
+            references user (username)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION,
     constraint connection_request_username
-        foreign key (username) references user (username)
+        foreign key (username)
+            references user (username)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION
 );
 
 create index connection_request_to_user_idx
@@ -71,30 +92,39 @@ create table if not exists post
 (
     pid       int auto_increment primary key,
     caption   varchar(320) null,
-    uid       varchar(80)  not null,
+    username  varchar(80)  not null,
     time      datetime     not null,
     image_url varchar(300) null,
     constraint FK_PostUser
-        foreign key (uid) references user (username)
+        foreign key (username)
+            references user (username)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION
 );
+
+create index post_user_idx
+    on post (username);
 
 create table if not exists comment
 (
     pid             int          not null,
-    uid             int          not null,
+    username        varchar(80)  not null,
     comment_content varchar(120) null,
     time            timestamp    null,
     constraint comment_post
-        foreign key (pid) references post (pid),
+        foreign key (pid) references post (pid)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION,
     constraint comment_user
-        foreign key (uid) references user (uid)
+        foreign key (username) references user (username)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION
 );
 
 create index comment_post_idx
     on comment (pid);
-
-create index uid_idx
-    on comment (uid);
+create index comment_user_idx
+    on comment (username);
 
 create table if not exists `like`
 (
@@ -105,6 +135,8 @@ create table if not exists `like`
         foreign key (pid) references post (pid),
     constraint like_user
         foreign key (username) references user (username)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION
 );
 
 create index like_post_idx
@@ -114,7 +146,7 @@ create index like_user_idx
     on `like` (username);
 
 create index FK_PostUser_idx
-    on post (uid);
+    on post (username);
 
 create table if not exists share
 (
@@ -141,6 +173,8 @@ create table if not exists socialconnection
     user_profile_link varchar(500) null,
     constraint social_user
         foreign key (uid) references user (username)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION
 );
 
 create index social_user_idx
