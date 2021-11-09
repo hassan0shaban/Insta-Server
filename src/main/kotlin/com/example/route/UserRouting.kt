@@ -71,17 +71,32 @@ fun Route.userRouting() {
 //        val username =
     }
 
-    get("/{username}") {
-        val username = call.parameters.get("username")
-        if (username == null)
-            call.respond(message = "null", status = HttpStatusCode.BadRequest).also { return@get }
+    authenticate(AuthMethod.method) {
+        get("/{username}") {
+            val username = call.parameters.get("username")
+            if (username == null)
+                call.respond(message = "null", status = HttpStatusCode.BadRequest).also { return@get }
 
-        val user = userService.getUser(username!!)
+            val user = userService.getUser(username!!)
 
-        if (user == null)
-            call.respond(message = "User is not found", status = HttpStatusCode.NotFound)
-        else
-            call.respond(message = user, status = HttpStatusCode.OK)
+            if (user == null)
+                call.respond(message = "User is not found", status = HttpStatusCode.NotFound)
+            else
+                call.respond(message = user, status = HttpStatusCode.OK)
+        }
+    }
+
+
+    authenticate(AuthMethod.method) {
+        get("/profile") {
+            val username = Utils.getUsername(call)
+            val user = userService.getUser(username)
+
+            if (user == null)
+                call.respond(message = "cannot get user", status = HttpStatusCode.NotFound)
+            else
+                call.respond(message = user, status = HttpStatusCode.OK)
+        }
     }
 
 

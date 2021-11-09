@@ -1,6 +1,6 @@
 package com.example.repo
 
-import com.example.model.Follower
+import com.example.model.Connection
 import com.example.model.User
 
 interface UserRepository {
@@ -11,12 +11,12 @@ interface UserRepository {
     fun checkUser(email: String): Int?
     fun getUserByEmail(email: String): User?
     fun getUser(email: String, password: String): User?
-    fun getConnections(username: String): List<Follower>
-    fun addConnection(followerUid: String, username: String): String?
+    fun getConnections(username: String): List<Connection>
+    fun insertConnection(followerUid: String, username: String): Result<Int?>
     fun insertFollowRequest(followerUid: String, username: String): String?
     fun deleteFollowRequest(followerUid: String, username: String): Int
     fun getFollowRequests(username: String): List<com.example.model.FollowRequest>
-    fun getFollowers(username: String): List<Follower>
+    fun getFollowers(username: String): List<Connection>
     suspend fun deleteLike(pid: Int, username: String): Result<Int>
     fun updateName(username: String, name: String): Int
 }

@@ -1,13 +1,12 @@
 package com.example.service
 
 
-import com.example.model.Follower
+import com.example.model.Connection
 import com.example.model.User
 import com.example.repo.PostRepository
 import com.example.repo.UserRepository
 import com.example.request.CreateUserByEmailRequest
 import com.example.request.LikeRequest
-import com.example.request.UpdateUsernameRequest
 
 class UserService(
     private val userRepository: UserRepository,
@@ -35,21 +34,11 @@ class UserService(
     fun getUser(email: String, password: String): User? =
         userRepository.getUser(email, password)
 
-    fun insertFollowRelation(followerUsername: String, username: String): String? {
-        userRepository.addConnection(
-            followerUid = username,
-            username = followerUsername
-        ) ?: kotlin.run {
-            return null
-        }
+    fun insertConnection(followerUsername: String, username: String): Boolean =
+        userRepository.insertConnection(
+            followerUid = username, username = followerUsername
+        ).isSuccess
 
-        return userRepository.addConnection(
-            followerUid = followerUsername,
-            username = username
-        ) ?: kotlin.run {
-            return null
-        }
-    }
 
     fun getConnections(username: String) =
         userRepository.getConnections(username = username)
@@ -69,10 +58,10 @@ class UserService(
     fun getFollowRequests(username: String): List<com.example.model.FollowRequest> =
         userRepository.getFollowRequests(username)
 
-    fun getFollowers(username: String): List<Follower> =
+    fun getFollowers(username: String): List<Connection> =
         userRepository.getFollowers(username)
 
-   suspend fun deleteLike(likeRequest: LikeRequest, username: String) : Boolean {
+    suspend fun deleteLike(likeRequest: LikeRequest, username: String): Boolean {
         userRepository
             .deleteLike(likeRequest.pid, username)
             .onSuccess {

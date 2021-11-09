@@ -5,12 +5,13 @@ import com.example.dp.table.ConnectionsTable
 import com.example.dp.table.LikeTable
 import com.example.dp.table.UserTable
 import com.example.maper.Mapper
+import com.example.maper.Mapper.connectionFromResultRow
+import com.example.maper.Mapper.followRequestFromResultRow
 import com.example.maper.Mapper.userFromResultRow
-import com.example.model.Follower
+import com.example.model.Connection
 import com.example.model.FollowRequest
 import com.example.model.User
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
@@ -38,27 +39,48 @@ class UserRepositoryImpl(
                 }
         }
 
-    override fun getConnections(username: String): List<Follower> =
-        transaction {
+    override fun getConnections(username: String): List<Connection> {
+        val usernameList = transaction {
             ConnectionsTable
-                .select(
-                    where = {
-                        ConnectionsTable.user1 eq username
-                    }
-                )
-                .map {
-                    Mapper.geFollowerFromResultRow(it)
+                .select {
+                    (ConnectionsTable.user1 eq username)
+                }.map {
+                    it[ConnectionsTable.user2]
                 }
         }
 
-    override fun addConnection(followerUid: String, username: String) =
-        transaction {
-            ConnectionsTable.insert {
-                it[this.user1] = followerUid
-                it[this.user2] = username
-                it[this.time] = DateTime()
-            }.getOrNull(ConnectionsTable.user2)
+        return usernameList.map {
+            transaction {
+                UserTable
+                    .select {
+                        (UserTable.username eq username)
+                    }.first().let {
+                        connectionFromResultRow(it)
+                    }
+            }
         }
+    }
+
+
+    override fun insertConnection(followerUid: String, username: String) = kotlin.runCatching {
+        transaction {
+            ConnectionsTable
+                .insert {
+                    it[this.user1] = followerUid
+                    it[this.user2] = username
+                    it[this.time] = DateTime()
+                }
+                .execute(this)
+
+            ConnectionsTable
+                .insert {
+                    it[this.user1] = username
+                    it[this.user2] = followerUid
+                    it[this.time] = DateTime()
+                }
+                .execute(this)
+        }
+    }
 
     override fun insertFollowRequest(followerUid: String, username: String) =
         transaction {
@@ -89,14 +111,14 @@ class UserRepositoryImpl(
                 }
         }
 
-    override fun getFollowers(username: String): List<Follower> =
+    override fun getFollowers(username: String): List<Connection> =
         transaction {
             ConnectionsTable
                 .select(
                     where = { ConnectionsTable.user2 eq username }
                 )
                 .map {
-                    Mapper.followerFromResultRow(it)
+                    Mapper.connectionFromResultRow(it)
                 }
         }
 

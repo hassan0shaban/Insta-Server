@@ -5,6 +5,7 @@ import com.example.di.repoModule
 import com.example.di.serviceModule
 import com.example.model.User
 import com.google.common.truth.Truth.assertThat
+import kotlinx.serialization.json.JsonElement
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -47,7 +48,6 @@ class UserRepositoryImplTest : KoinTest {
 
     @Test
     fun changePassword() {
-//        userRepository.updatePassword(username = "200407", password = "123456")
     }
 
     @Test
