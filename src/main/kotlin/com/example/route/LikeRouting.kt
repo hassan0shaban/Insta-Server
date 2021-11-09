@@ -34,18 +34,28 @@ fun Route.likeRouting() {
 
     authenticate(AuthMethod.method) {
         post("/like") {
-            val like = call.receiveOrNull<LikeRequest>() ?: kotlin.run {
+            val request = call.receiveOrNull<LikeRequest>() ?: kotlin.run {
                 call.respond(message = "wrong info", status = HttpStatusCode.BadRequest)
                 return@post
             }
 
             val username = Utils.getUsername(call)
 
-            if (likeService.insertLike(like, username)) {
-                call.respond(message = "success", status = HttpStatusCode.Created)
-            } else {
-                call.respond(message = "cannot insert comment", status = HttpStatusCode.NotImplemented)
+            val like = likeService.getLike(username, request.pid) ?: kotlin.runCatching {
+                if (likeService.insertLike(request, username)) {
+                    call.respond(message = "success", status = HttpStatusCode.Created)
+                } else {
+                    call.respond(message = "cannot insert comment", status = HttpStatusCode.NotImplemented)
+                }
+                return@post
             }
+
+            if (likeService.deleteLike(request, username)) {
+                call.respond(message = "success", status = HttpStatusCode.OK)
+            } else {
+                call.respond(message = "cannot delete comment", status = HttpStatusCode.NotImplemented)
+            }
+            return@post
         }
     }
 }

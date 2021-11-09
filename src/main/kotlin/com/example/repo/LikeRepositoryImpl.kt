@@ -5,6 +5,7 @@ import com.example.request.LikeRequest
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
@@ -23,7 +24,14 @@ class LikeRepositoryImpl : LikeRepository {
         transaction {
             LikeTable
                 .deleteWhere {
-                    (LikeTable.pid eq  pid) and (LikeTable.username eq username)
+                    (LikeTable.pid eq pid) and (LikeTable.username eq username)
                 }
+        }
+
+    override fun getLike(username: String, pid: Int) =
+        transaction {
+            LikeTable.select {
+                (LikeTable.pid eq pid) and (LikeTable.username eq username)
+            }.firstOrNull()
         }
 }
