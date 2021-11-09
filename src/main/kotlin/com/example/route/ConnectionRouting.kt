@@ -18,9 +18,7 @@ fun Route.connectionRouting() {
             val principal = call.principal<JWTPrincipal>()
             val username = principal!!.payload.getClaim(AuthenticationParameters.USERNAME).asString()
 
-            call.respond(
-                message = userService.getConnections(username),
-            )
+            call.respond(message = userService.getConnections(username))
         }
     }
 
@@ -47,14 +45,17 @@ fun Route.connectionRouting() {
                 return@post
             }
 
-            val principal = call.principal<JWTPrincipal>()
-            val username = principal!!.payload.getClaim(AuthenticationParameters.USERNAME).asString()
+            val username = Utils.getUsername(call)
 
-            userService.insertFollowRelation(followUsername, username).let {
-                if (it != null)
-                    call.respond(message = "success", status = HttpStatusCode.OK)
-                else
-                    call.respond(message = "Cannot update username", status = HttpStatusCode.BadRequest)
+            val isSuccess = userService.insertConnection(
+                followerUsername = followUsername,
+                username = username
+            )
+
+            if (isSuccess) {
+                call.respond(message = "success", status = HttpStatusCode.Created)
+            } else {
+                call.respond(message = "failed", status = HttpStatusCode.NotImplemented)
             }
         }
     }
