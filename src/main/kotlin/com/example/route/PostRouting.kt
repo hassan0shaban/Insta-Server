@@ -36,6 +36,17 @@ fun Route.postRouting() {
     }
 
     authenticate(AuthMethod.method) {
+        get("/profile/posts") {
+            val username = Utils.getUsername(call)
+
+            call.respond(
+                message = postService.getUserPosts(username),
+                status = HttpStatusCode.OK
+            )
+        }
+    }
+
+    authenticate(AuthMethod.method) {
         get("/posts/{$PID}") {
             val pid = call.parameters[PID]?.toInt() ?: kotlin.run {
                 call.respond(message = "username is not correct", status = HttpStatusCode.BadRequest)
@@ -50,7 +61,7 @@ fun Route.postRouting() {
             call.respond(
                 message = post.apply {
 //                    TODO change base URL
-                    post.post.imageUrl = "http://localhost:8080/${post.post.imageUrl}"
+                    post.post.postImageUrl = "http://localhost:8080/${post.post.postImageUrl}"
                 },
                 status = HttpStatusCode.OK
             )
@@ -68,7 +79,7 @@ fun Route.postRouting() {
                 name = HttpHeaders.ContentDisposition,
                 value = ContentDisposition
                     .Attachment
-                    .withParameter(ContentDisposition.Parameters.FileName, imageUrl)
+                    .withParameter(ContentDisposition.Parameters.FileName, imageUrl.plus(".jpg"))
                     .toString()
             )
 

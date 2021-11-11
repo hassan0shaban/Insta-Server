@@ -1,7 +1,6 @@
 package com.example.repo
 
 import com.example.di.databaseModule
-import com.example.di.repoModule
 import com.example.di.serviceModule
 import com.google.common.truth.Truth.assertThat
 import org.junit.After
@@ -20,7 +19,6 @@ class PostRepositoryImplTest : KoinTest {
     fun setUp() {
         startKoin {
             modules(
-                repoModule,
                 serviceModule,
                 databaseModule
             )

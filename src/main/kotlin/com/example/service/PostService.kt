@@ -31,11 +31,11 @@ class PostService(
             .getUserPosts(username)
             .forEach { post ->
                 val user = userRepository.getUser(post.username)
-                val comments = postRepository.getPostComments(post.pid)
-                val likes = postRepository.getPostLikes(post.pid)
+                val comments = postRepository.getPostComments(post.postId)
+                val likes = postRepository.getPostLikes(post.postId)
                 posts.add(
                     PostResponse(
-                        likeResponses = likes,
+                        likes = likes,
                         comments = comments,
                         user = user!!,
                         post = post
@@ -53,7 +53,7 @@ class PostService(
                 val comments = postRepository.getPostComments(pid)
                 val user = userRepository.getUser(post.username)
                 return@let PostResponse(
-                    likeResponses = likes,
+                    likes = likes,
                     comments = comments,
                     user = user!!,
                     post = post

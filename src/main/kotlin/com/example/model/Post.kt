@@ -1,9 +1,9 @@
 package com.example.model
 
 data class Post(
-    val pid: Int,
+    val postId: Int,
     val caption: String,
     val username: String,
-    var imageUrl: String,
+    var postImageUrl: String,
     val time: String,
 )

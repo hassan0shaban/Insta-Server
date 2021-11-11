@@ -9,10 +9,11 @@ object PostMapper {
 
     fun postFromResultRow(resultRow: ResultRow): Post =
         Post(
-            pid = resultRow[PostTable.pid],
+            postId = resultRow[PostTable.pid],
             time = resultRow[PostTable.time].let { TimeFormatter.dateTimeToString(it)},
             caption = resultRow[PostTable.caption],
-            imageUrl = resultRow[PostTable.imageUrl],
+//            TODO change url
+            postImageUrl = "http://192.168.1.15:8080/" + resultRow[PostTable.imageUrl],
             username = resultRow[PostTable.username],
         )
 }

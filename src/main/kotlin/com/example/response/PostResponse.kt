@@ -7,6 +7,6 @@ import com.example.model.User
 data class PostResponse(
     var post: Post,
     var comments: List<Comment> = emptyList(),
-    var likeResponses: List<LikeResponse> = emptyList(),
+    var likes: List<LikeResponse> = emptyList(),
     val user: User,
 )
