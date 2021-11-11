@@ -39,9 +39,11 @@ class UserService(
             followerUid = username, username = followerUsername
         ).isSuccess
 
-
     fun getConnections(username: String) =
         userRepository.getConnections(username = username)
+
+    fun getChatConnections(username: String) =
+        userRepository.getChatConnections(username = username)
 
     fun addFollowRequest(username: String, followerUsername: String) =
         userRepository.insertFollowRequest(

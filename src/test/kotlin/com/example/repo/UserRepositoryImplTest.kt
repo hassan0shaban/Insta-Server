@@ -1,11 +1,8 @@
 package com.example.repo
 
 import com.example.di.databaseModule
-import com.example.di.repoModule
 import com.example.di.serviceModule
-import com.example.model.User
 import com.google.common.truth.Truth.assertThat
-import kotlinx.serialization.json.JsonElement
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -22,7 +19,6 @@ class UserRepositoryImplTest : KoinTest {
     fun setUp() {
         startKoin {
             modules(
-                repoModule,
                 serviceModule,
                 databaseModule
             )

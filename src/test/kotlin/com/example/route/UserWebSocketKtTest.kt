@@ -5,7 +5,7 @@ import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlin.test.Test
 
-public class UserRoutingKtTest {
+public class UserWebSocketKtTest {
 
     @Test
     fun testPostEmaillogin() {

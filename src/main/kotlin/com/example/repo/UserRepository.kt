@@ -2,6 +2,7 @@ package com.example.repo
 
 import com.example.model.Connection
 import com.example.model.User
+import com.example.response.ChatResponse
 
 interface UserRepository {
     fun updateUsername(username: String, newUsername: String): Int
@@ -12,6 +13,7 @@ interface UserRepository {
     fun getUserByEmail(email: String): User?
     fun getUser(email: String, password: String): User?
     fun getConnections(username: String): List<Connection>
+    fun getChatConnections(username: String): List<Connection>
     fun insertConnection(followerUid: String, username: String): Result<Int?>
     fun insertFollowRequest(followerUid: String, username: String): String?
     fun deleteFollowRequest(followerUid: String, username: String): Int

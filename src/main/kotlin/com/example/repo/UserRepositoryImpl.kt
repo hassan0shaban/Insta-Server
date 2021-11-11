@@ -1,9 +1,6 @@
 package com.example.repo
 
-import com.example.dp.table.FollowRequestTable
-import com.example.dp.table.ConnectionsTable
-import com.example.dp.table.LikeTable
-import com.example.dp.table.UserTable
+import com.example.dp.table.*
 import com.example.maper.Mapper
 import com.example.maper.Mapper.connectionFromResultRow
 import com.example.maper.Mapper.followRequestFromResultRow
@@ -11,7 +8,10 @@ import com.example.maper.Mapper.userFromResultRow
 import com.example.model.Connection
 import com.example.model.FollowRequest
 import com.example.model.User
+import com.example.response.ChatResponse
+import com.example.response.ConnectionResponse
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
@@ -53,13 +53,31 @@ class UserRepositoryImpl(
             transaction {
                 UserTable
                     .select {
-                        (UserTable.username eq username)
+                        (UserTable.username eq it)
                     }.first().let {
                         connectionFromResultRow(it)
                     }
             }
         }
     }
+
+    override fun getChatConnections(username: String): List<Connection> =
+        transaction {
+            ConnectionsTable
+                .join(UserTable, JoinType.INNER, null) {
+                    ((ConnectionsTable.user1 eq UserTable.username) or
+                            (ConnectionsTable.user2 eq UserTable.username)) and
+                            (UserTable.username neq username)
+                }
+                .select {
+                    ((ConnectionsTable.user2 eq username) or
+                            (ConnectionsTable.user1 eq username))
+                }
+                .groupBy(UserTable.username)
+                .map {
+                    Mapper.connectionFromResultRow(it)
+                }
+        }
 
 
     override fun insertConnection(followerUid: String, username: String) = kotlin.runCatching {

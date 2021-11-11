@@ -67,12 +67,8 @@ fun Route.userRouting() {
         }
     }
 
-    post("/signout") {
-//        val username =
-    }
-
     authenticate(AuthMethod.method) {
-        get("/{username}") {
+            get("/{username}") {
             val username = call.parameters.get("username")
             if (username == null)
                 call.respond(message = "null", status = HttpStatusCode.BadRequest).also { return@get }

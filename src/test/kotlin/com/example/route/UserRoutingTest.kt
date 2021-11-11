@@ -1,14 +1,10 @@
 package com.example.route
 
 import com.example.di.databaseModule
-import com.example.di.repoModule
 import com.example.di.serviceModule
-import com.example.model.User
-import com.example.module
 import com.example.request.CreateUserByEmailRequest
 import com.example.service.UserService
 import com.google.common.truth.Truth.assertThat
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.ktor.application.*
 import io.ktor.features.*
@@ -34,7 +30,6 @@ class UserRoutingTest : KoinTest {
     fun setUp() {
         startKoin {
             modules(
-                repoModule,
                 serviceModule,
                 databaseModule
             )
@@ -63,12 +58,6 @@ class UserRoutingTest : KoinTest {
                         "email" : "hassan.shaba@gmail.com"
                         }
                     """
-//                    GsonBuilder().create().toJsonTree(
-//                        CreateUserByEmailRequest(
-//                            email = "hassan",
-//                            password = "12345678"
-//                        )
-//                    ).toString()
                 ).toString().also { println(it) }
             }.apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
