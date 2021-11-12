@@ -41,7 +41,14 @@ fun Route.likeRouting() {
 
             val username = Utils.getUsername(call)
 
-            val like = likeService.getLike(username, request.pid) ?: kotlin.runCatching {
+            if (likeService.checkLike(username, request.pid)) {
+                if (likeService.deleteLike(request, username)) {
+                    call.respond(message = "success", status = HttpStatusCode.OK)
+                } else {
+                    call.respond(message = "cannot delete comment", status = HttpStatusCode.NotImplemented)
+                }
+                return@post
+            } else {
                 if (likeService.insertLike(request, username)) {
                     call.respond(message = "success", status = HttpStatusCode.Created)
                 } else {
@@ -49,13 +56,6 @@ fun Route.likeRouting() {
                 }
                 return@post
             }
-
-            if (likeService.deleteLike(request, username)) {
-                call.respond(message = "success", status = HttpStatusCode.OK)
-            } else {
-                call.respond(message = "cannot delete comment", status = HttpStatusCode.NotImplemented)
-            }
-            return@post
         }
     }
 }

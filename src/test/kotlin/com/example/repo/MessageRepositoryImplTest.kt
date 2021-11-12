@@ -62,6 +62,8 @@ class MessageRepositoryImplTest : KoinTest {
 
     @Test
     fun getChats() {
+        println(messageRepository.getChats(username = "1").getOrThrow().toMutableList())
+
         assertThat(
             messageRepository.getChats(username = "1").getOrThrow().size
         ).isEqualTo(4)

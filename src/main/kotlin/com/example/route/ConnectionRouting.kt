@@ -18,7 +18,7 @@ fun Route.connectionRouting() {
             val principal = call.principal<JWTPrincipal>()
             val username = principal!!.payload.getClaim(AuthenticationParameters.USERNAME).asString()
 
-            call.respond(message = userService.getConnections(username))
+            call.respond(message = userService.getChatConnections(username))
         }
     }
 

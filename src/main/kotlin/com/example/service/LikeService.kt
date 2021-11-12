@@ -23,5 +23,7 @@ class LikeService(
             Mapper.getLikeFromResultRow(it)
         }
 
+    fun checkLike(username: String, pid: Int) =
+        likeRepository.getLike(username, pid) != null
 }
 

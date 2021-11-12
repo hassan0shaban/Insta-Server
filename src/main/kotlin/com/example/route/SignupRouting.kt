@@ -73,27 +73,5 @@ fun Route.signupRouting() {
         }.close()
 
         return@post
-//        val request = call.receiveOrNull<CreateUserByEmailRequest>() ?: kotlin.run {
-//        val request = call.receiveOrNull<CreateUserByEmailRequest>() ?: kotlin.run {
-//            call.respond(message = "request body is not valid", status = HttpStatusCode.BadRequest)
-//            return@post
-//        }
-
-//        userService.getUserByEmail(request.email)?.let {
-//            call.respond(
-//                message = "User is already found, your username: ${it.username}",
-//                status = HttpStatusCode.BadRequest
-//            )
-//            return@post
-//        }
-//
-//        userService.insertUser(request).let {
-//            if (it != null)
-//                call.respond(message = "$it", status = HttpStatusCode.OK)
-//            else
-//                call.respond(message = "Cannot create account", status = HttpStatusCode.BadRequest)
-//        }
-//    }
-
     }
 }

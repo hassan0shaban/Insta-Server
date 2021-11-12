@@ -41,6 +41,7 @@ dependencies {
     implementation("io.ktor:ktor-auth-jwt:$ktor_version")
 
     implementation("io.ktor:ktor-client-cio:$ktor_version")
+    implementation("io.ktor:ktor-websockets:$ktor_version")
 
     testImplementation("com.google.truth:truth:1.1.3")
     //exposed

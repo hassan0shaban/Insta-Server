@@ -2,6 +2,7 @@ package com.example.dp.utils
 
 object TableNames {
     const val Post = "Post"
+    const val Message = "Message"
     const val User = "User"
     const val SocialConnection = "SocialConnection"
     const val Like = "Like"

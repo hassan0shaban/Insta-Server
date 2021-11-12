@@ -11,7 +11,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import org.koin.ktor.ext.inject
 
-fun Route.feedRouting(secret: String, issuer: String, audience: String) {
+fun Route.feedRouting() {
 
     val userService: UserService by inject()
     val postService: PostService by inject()

@@ -6,6 +6,7 @@ import com.example.request.LoginByEmailRequest
 import com.example.route.AuthenticationParameters.USERNAME
 import com.example.route.LoginMethods.EMAIL
 import com.example.route.Routing.LOGIN
+import com.example.route.utils.Constants.threeMonths
 import com.example.service.UserService
 import io.ktor.application.*
 import io.ktor.http.*
@@ -37,7 +38,7 @@ fun Route.loginRouting(secret: String, issuer: String, audience: String) {
             .withAudience(audience)
             .withIssuer(issuer)
             .withClaim(USERNAME, user.username)
-            .withExpiresAt(Date(System.currentTimeMillis() + 2592000000))
+            .withExpiresAt(Date(System.currentTimeMillis() + threeMonths))
             .sign(Algorithm.HMAC256(secret))
 
         call.respond(hashMapOf("token" to token))
