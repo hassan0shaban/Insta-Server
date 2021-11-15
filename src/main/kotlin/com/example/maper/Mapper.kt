@@ -2,11 +2,11 @@ package com.example.maper
 
 import com.example.dp.table.*
 import com.example.model.*
-import com.example.response.ChatResponse
-import com.example.response.LikeResponse
-import com.example.response.MessageResponse
+import com.example.response.*
+import com.example.response.utils.Utils.LIKE_NOTIFICATION_TYPE
 import com.example.utils.TimeFormatter
 import org.jetbrains.exposed.sql.ResultRow
+import java.sql.ResultSet
 
 object Mapper {
     fun userFromResultRow(resultRow: ResultRow): User {
@@ -17,7 +17,7 @@ object Mapper {
             username = resultRow[UserTable.username],
             uid = resultRow[UserTable.uid],
             //TODO change url
-            userImageUrl = "http://192.168.1.15:8080/" + resultRow[UserTable.user_image_url],
+            userImageUrl = "http://192.168.1.15:8080/" + resultRow[UserTable.userImageUrl],
             email = resultRow[UserTable.email],
             phoneNumber = resultRow[UserTable.phoneNumber],
         )
@@ -29,12 +29,14 @@ object Mapper {
             username = resultRow[UserTable.username],
 //            time = resultRow[ConnectionsTable.time].let { TimeFormatter.dateTimeToString(it) },
             profileName = resultRow[UserTable.name],
-            userImageUrl = resultRow[UserTable.user_image_url],
+            userImageUrl = resultRow[UserTable.userImageUrl],
         )
 
     fun getCommentsFromResultRow(resultRow: ResultRow): Comment =
         Comment(
             username = resultRow[CommentTable.username],
+            userImageUrl = resultRow[UserTable.userImageUrl],
+            profileName = resultRow[UserTable.name],
             time = resultRow[CommentTable.time].let { TimeFormatter.dateTimeToString(it) },
             comment = resultRow[CommentTable.commentContent],
             postId = resultRow[CommentTable.pid],
@@ -59,7 +61,7 @@ object Mapper {
         Connection(
             username = resultRow[UserTable.username],
             profileName = resultRow[UserTable.name],
-            userImageUrl = "http://192.168.1.15:8080/" + resultRow[UserTable.user_image_url],
+            userImageUrl = "http://192.168.1.15:8080/" + resultRow[UserTable.userImageUrl],
         )
 
     fun messageFromResultRow(resultRow: ResultRow): MessageResponse =
@@ -75,8 +77,44 @@ object Mapper {
         ChatResponse(
             time = resultRow[MessageTable.time].let { TimeFormatter.dateTimeToString(it) },
             username = resultRow[UserTable.username],
-            userImageUrl = resultRow[UserTable.user_image_url]?.let { "http://192.168.1.15:8080/$it" },
+            userImageUrl = resultRow[UserTable.userImageUrl]?.let { "http://192.168.1.15:8080/$it" },
             name = resultRow[UserTable.name],
             lastMessage = resultRow[MessageTable.message],
         )
+
+    fun mapToLikeNotifications(resultSet: ResultSet): ArrayList<LikeNotification> {
+        val notificationsList = arrayListOf<LikeNotification>()
+
+        while (resultSet.next()) {
+            notificationsList.add(
+                LikeNotification(
+                    type = LIKE_NOTIFICATION_TYPE,
+                    likeCount = resultSet.getInt("count"),
+                    profileName = resultSet.getString("name"),
+                    postImageUrl = "http://192.168.1.15:8080/" + resultSet.getString("image_url"),
+                    time = resultSet.getObject("time").toString(),
+                    postId = resultSet.getInt("pid"),
+                )
+            )
+        }
+        return notificationsList
+    }
+
+    fun mapToCommentNotifications(resultSet: ResultSet): ArrayList<CommentNotification> {
+        val notificationsList = arrayListOf<CommentNotification>()
+
+        while (resultSet.next()) {
+            notificationsList.add(
+                CommentNotification(
+                    type = LIKE_NOTIFICATION_TYPE,
+                    likeCount = resultSet.getInt("count"),
+                    profileName = resultSet.getString("name"),
+                    postImageUrl = "http://192.168.1.15:8080/" + resultSet.getString("image_url"),
+                    time = resultSet.getObject("time").toString(),
+                    postId = resultSet.getInt("pid"),
+                )
+            )
+        }
+        return notificationsList
+    }
 }

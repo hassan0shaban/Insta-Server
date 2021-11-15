@@ -16,7 +16,9 @@ class PostRepositoryImpl(private val database: Database) : PostRepository {
 
     override fun getPostComments(pid: Int): List<Comment> =
         transaction {
-            CommentTable
+            CommentTable.join(
+                UserTable, JoinType.INNER
+            ) { UserTable.username eq CommentTable.username }
                 .select(
                     where = {
                         CommentTable.pid eq pid

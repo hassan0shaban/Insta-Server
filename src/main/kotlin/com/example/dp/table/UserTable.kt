@@ -10,7 +10,7 @@ object UserTable : Table(TableNames.User) {
     val username = varchar(UserFields.username, 80).primaryKey()
     val password = varchar(UserFields.password, 50)
     val phoneNumber = varchar(UserFields.phone_number, 45).nullable()
-    val user_image_url = varchar(UserFields.user_image_url, 300).nullable()
+    val userImageUrl = varchar(UserFields.user_image_url, 300).nullable()
     val name = varchar(UserFields.name, 45)
     val token = varchar(UserFields.token, 3000).nullable()
     val bio = varchar(UserFields.bio, 300).nullable()

@@ -29,10 +29,45 @@ group by user.username;
 SELECT *
 from message
 
-where (sender = '5' and receiver= '5')
+where (sender = '5' and receiver = '5')
    or (receiver = '5' and sender = '5')
-order by time desc limit 1;
+order by time desc
+limit 1;
 
+
+SELECT name, post.image_url, post.pid, (count(`like`.username) - 1) as count, max(`like`.time) as time
+from social_media.like
+         join user
+         join post
+where (
+                  user.username = `like`.username and
+                  post.pid = `like`.pid and
+                  post.username = '5'
+          )
+group by post.pid
+limit 50;
+
+SELECT *
+from social_media.comment
+         CROSS JOIN user
+where (user.username = comment.username and
+       comment.pid = 23)
+limit 50;
+
+
+SELECT name, post.image_url, post.pid, (count(comment.username) - 1) as count, max(comment.time) as time
+from social_media.comment
+         join user
+         join post
+where (
+                  user.username = comment.username and
+                  post.pid = comment.pid and
+                  post.username = '5'
+          )
+group by post.pid
+limit 50;
+
+# order by social_media.like.time desc;
 
 
 # or receiver = '1') and not message.sender != '1' and not message.receiver != '1' order by time;

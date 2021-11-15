@@ -8,5 +8,7 @@ data class Comment(
     val comment: String,
     val commentId: Int,
     var username: String? = null,
-    var time: String = DateTime().let { TimeFormatter.dateTimeToString(it) },
+    var time: String,
+    val userImageUrl: String?,
+    val profileName: String,
 )

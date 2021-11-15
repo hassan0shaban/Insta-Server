@@ -11,6 +11,7 @@ import io.ktor.features.*
 import io.ktor.gson.*
 import io.ktor.http.*
 import io.ktor.routing.*
+import io.ktor.routing.Routing
 import io.ktor.server.testing.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
@@ -87,6 +88,32 @@ class UserRoutingTest : KoinTest {
                         )
                     ).toString().also { println(it) }
                 )
+            }.apply {
+                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
+                println(response.content)
+            }
+        }
+    }
+
+    @Test
+    fun `getting Feed Posts`() {
+        withTestApplication(
+            moduleFunction = {
+                install(Routing) { userRouting() }
+                install(ContentNegotiation) { gson { } }
+            }
+        ) {
+            handleRequest(HttpMethod.Get, "/feed", ) {
+                setBody(
+                    GsonBuilder().create().toJsonTree(
+                        CreateUserByEmailRequest(
+                            email = "hassan",
+                            password = "12345678",
+                            name = ""
+                        )
+                    ).toString().also { println(it) }
+                )
+                addHeader("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hlbGxvIiwiaXNzIjoiaHR0cDovLzAuMC4wLjA6ODA4MC8iLCJleHAiOjE2Mzg2MDA1NjQsInVzZXJuYW1lIjoiMSJ9.PV1isIjteTstHmkectYQSikXVeYF4UNny9TZuO2Z4gM")
             }.apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
                 println(response.content)

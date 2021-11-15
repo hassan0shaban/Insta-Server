@@ -40,10 +40,6 @@ fun Route.webSocket() {
             }
         }
     }
-
-    get("/get") {
-        call.respond("hksfhkshfsahlf")
-    }
 }
 
 class Connection(val session: DefaultWebSocketSession) {
