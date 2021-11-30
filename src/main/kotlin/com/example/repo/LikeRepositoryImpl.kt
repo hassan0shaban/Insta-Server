@@ -1,6 +1,6 @@
 package com.example.repo
 
-import com.example.dp.table.LikeTable
+import com.example.db.table.LikeTable
 import com.example.request.LikeRequest
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere

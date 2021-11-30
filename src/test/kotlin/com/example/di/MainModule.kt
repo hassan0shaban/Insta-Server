@@ -19,6 +19,8 @@ val mainModule = module {
 
     single<PostRepository> { PostRepositoryImpl(get()) }
 
+    single<SearchRepository> { SearchRepositoryImpl(get()) }
+
     single<MessageRepository> { MessageRepositoryImpl(get()) }
 
     single<LikeRepository> { LikeRepositoryImpl() }
@@ -38,4 +40,6 @@ val mainModule = module {
     single { NotificationsService(get()) }
 
     single { MessageService(get()) }
+
+    single { SearchService(get()) }
 }

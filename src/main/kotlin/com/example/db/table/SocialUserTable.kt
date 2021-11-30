@@ -1,8 +1,7 @@
-package com.example.dp.table
+package com.example.db.table
 
-import com.example.dp.utils.TableNames
-import com.example.dp.utils.UserFields
-import com.example.model.User
+import com.example.db.utils.TableNames
+import com.example.db.utils.UserFields
 import org.jetbrains.exposed.sql.Table
 
 object SocialUserTable : Table(TableNames.User) {

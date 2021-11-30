@@ -3,12 +3,10 @@ package com.example.route
 import com.example.AuthMethod
 import com.example.request.CommentRequest
 import com.example.request.DeleteCommentRequest
-import com.example.request.LikeRequest
-import com.example.route.Utils.getUsername
+import com.example.route.utils.Utils.getUsername
 import com.example.service.CommentService
 import io.ktor.application.*
 import io.ktor.auth.*
-import io.ktor.auth.jwt.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*

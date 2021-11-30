@@ -1,8 +1,7 @@
 package com.example.repo
 
-import com.example.ChatMessage
-import com.example.dp.table.MessageTable
-import com.example.dp.table.UserTable
+import com.example.db.table.MessageTable
+import com.example.db.table.UserTable
 import com.example.maper.Mapper
 import com.example.request.MessageInsertRequest
 import com.example.response.ChatResponse
@@ -24,12 +23,11 @@ class MessageRepositoryImpl(private val database: Database) : MessageRepository 
         }
     }
 
-    override fun insertMessage(request: ChatMessage) = kotlin.runCatching {
+    override fun insertMessage(request: MessageInsertRequest) = kotlin.runCatching {
         transaction {
             MessageTable.insert {
                 it[message] = request.message
                 it[receiver] = request.receiver
-                it[sender] = request.sender
                 it[time] = DateTime()
             }
         }

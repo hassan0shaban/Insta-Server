@@ -5,11 +5,13 @@ import com.example.request.UpdateName
 import com.example.request.Username
 import com.example.route.LoginMethods.EMAIL
 import com.example.route.LoginMethods.FACEBOOK
-import com.example.route.LoginMethods.Google
+import com.example.route.LoginMethods.GOOGLE
 import com.example.route.Parameters.Login_Method
 import com.example.route.Parameters.Signup_Method
 import com.example.route.Routing.LOGIN
 import com.example.route.Routing.SIGNUP
+import com.example.route.utils.Utils
+import com.example.route.utils.redirectInternally
 import com.example.service.UserService
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -35,8 +37,8 @@ fun Route.userRouting() {
                 call.redirectInternally("$SIGNUP/$FACEBOOK")
             }
 
-            Google -> {
-                call.redirectInternally("$SIGNUP/$Google")
+            GOOGLE -> {
+                call.redirectInternally("$SIGNUP/$GOOGLE")
             }
 
             else -> {
@@ -54,11 +56,11 @@ fun Route.userRouting() {
             }
 
             FACEBOOK -> {
-                call.respondRedirect("$LOGIN/$FACEBOOK")
+                call.redirectInternally("$LOGIN/$FACEBOOK")
             }
 
-            Google -> {
-                call.respondRedirect("$LOGIN/$Google")
+            GOOGLE -> {
+                call.redirectInternally("$LOGIN/$GOOGLE")
             }
 
             else -> {

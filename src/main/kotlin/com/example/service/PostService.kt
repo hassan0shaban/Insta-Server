@@ -22,13 +22,17 @@ class PostService(
         false
     }
 
-    fun insertPost(caption: String, imageUrl: String, username: String): Int? =
-        postRepository.insertPost(caption, imageUrl, username)
+    fun insertPost(parts: HashMap<String, Any?>, username: String): Int? =
+        postRepository.insertPost(
+            caption = parts.get("caption") as String,
+            type = (parts.get("type") as String).toInt(),
+            username = username
+        )
 
-    fun getUserPosts(username: String): ArrayList<PostResponse> {
+    fun getUserPosts(username: String, page: Int, pageSize: Int): ArrayList<PostResponse> {
         val posts = arrayListOf<PostResponse>()
         postRepository
-            .getUserPosts(username)
+            .getUserPosts(username, page, pageSize)
             .forEach { post ->
                 val user = userRepository.getUser(post.username)
                 val comments = postRepository.getPostComments(post.postId)
@@ -66,14 +70,14 @@ class PostService(
     fun getPostComments(pid: Int): List<Comment> =
         postRepository.getPostComments(pid)
 
-    fun getFeedPosts(username: String): List<PostResponse> {
+    fun getFeedPosts(username: String, page: Int, pageSize: Int): List<PostResponse> {
         val posts = arrayListOf<PostResponse>()
         userRepository
             .getConnections(username)
             .forEach { connection ->
-                posts += getUserPosts(connection.username)
+                posts += getUserPosts(connection.username, page, pageSize)
             }
-        return posts
+        return posts.sortedByDescending { it.post.time }
     }
 
     fun updatePostImageUrl(pid: Int, imageUrl: String): Int =

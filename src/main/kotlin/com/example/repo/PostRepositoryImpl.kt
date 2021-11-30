@@ -1,13 +1,12 @@
 package com.example.repo
 
-import com.example.dp.table.*
+import com.example.db.table.*
 import com.example.maper.Mapper.getCommentsFromResultRow
 import com.example.maper.Mapper.getLikeFromResultRow
 import com.example.maper.PostMapper
 import com.example.model.Comment
 import com.example.response.LikeResponse
 import com.example.model.Post
-import com.example.repo.Constants.UserPostsLimit
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
@@ -43,7 +42,7 @@ class PostRepositoryImpl(private val database: Database) : PostRepository {
                 }
         }
 
-    override fun getUserPosts(username: String, limit: Int): List<Post> =
+    override fun getUserPosts(username: String, page: Int, pageSize: Int): List<Post> =
         transaction {
             PostTable
                 .select(
@@ -51,7 +50,8 @@ class PostRepositoryImpl(private val database: Database) : PostRepository {
                         PostTable.username eq username
                     }
                 )
-                .limit(UserPostsLimit)
+                .limit(pageSize * page)
+                .sortedByDescending { PostTable.time }
                 .map {
                     PostMapper.postFromResultRow(it)
                 }
@@ -82,12 +82,12 @@ class PostRepositoryImpl(private val database: Database) : PostRepository {
             }
         }
 
-    override fun insertPost(caption: String, imageUrl: String, username: String): Int? =
+    override fun insertPost(caption: String, username: String, type: Int): Int? =
         transaction {
             PostTable.insert {
                 it.set(this.username, username)
-                it.set(this.imageUrl, imageUrl)
                 it.set(this.caption, caption)
+                it.set(this.type, type)
                 it.set(this.time, DateTime.now())
             }.getOrNull(PostTable.pid)
         }

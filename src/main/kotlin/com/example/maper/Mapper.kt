@@ -1,8 +1,9 @@
 package com.example.maper
 
-import com.example.dp.table.*
+import com.example.db.table.*
 import com.example.model.*
 import com.example.response.*
+import com.example.response.utils.Utils.COMMENT_NOTIFICATION_TYPE
 import com.example.response.utils.Utils.LIKE_NOTIFICATION_TYPE
 import com.example.utils.TimeFormatter
 import org.jetbrains.exposed.sql.ResultRow
@@ -11,13 +12,13 @@ import java.sql.ResultSet
 object Mapper {
     fun userFromResultRow(resultRow: ResultRow): User {
         return User(
-            name = resultRow[UserTable.name]!!,
+            name = resultRow[UserTable.name],
             password = resultRow[UserTable.password],
             bio = resultRow[UserTable.bio],
             username = resultRow[UserTable.username],
             uid = resultRow[UserTable.uid],
             //TODO change url
-            userImageUrl = "http://192.168.1.15:8080/" + resultRow[UserTable.userImageUrl],
+            userImageUrl = "http://192.168.1.15:5000/" + resultRow[UserTable.userImageUrl],
             email = resultRow[UserTable.email],
             phoneNumber = resultRow[UserTable.phoneNumber],
         )
@@ -25,9 +26,7 @@ object Mapper {
 
     fun geFollowerFromResultRow(resultRow: ResultRow): Connection =
         Connection(
-//            followerUid = resultRow[ConnectionsTable.user1],
             username = resultRow[UserTable.username],
-//            time = resultRow[ConnectionsTable.time].let { TimeFormatter.dateTimeToString(it) },
             profileName = resultRow[UserTable.name],
             userImageUrl = resultRow[UserTable.userImageUrl],
         )
@@ -35,7 +34,7 @@ object Mapper {
     fun getCommentsFromResultRow(resultRow: ResultRow): Comment =
         Comment(
             username = resultRow[CommentTable.username],
-            userImageUrl = resultRow[UserTable.userImageUrl],
+            userImageUrl = "http://192.168.1.15:5000/" + resultRow[UserTable.userImageUrl],
             profileName = resultRow[UserTable.name],
             time = resultRow[CommentTable.time].let { TimeFormatter.dateTimeToString(it) },
             comment = resultRow[CommentTable.commentContent],
@@ -61,7 +60,7 @@ object Mapper {
         Connection(
             username = resultRow[UserTable.username],
             profileName = resultRow[UserTable.name],
-            userImageUrl = "http://192.168.1.15:8080/" + resultRow[UserTable.userImageUrl],
+            userImageUrl = "http://192.168.1.15:5000/" + resultRow[UserTable.userImageUrl],
         )
 
     fun messageFromResultRow(resultRow: ResultRow): MessageResponse =
@@ -77,7 +76,7 @@ object Mapper {
         ChatResponse(
             time = resultRow[MessageTable.time].let { TimeFormatter.dateTimeToString(it) },
             username = resultRow[UserTable.username],
-            userImageUrl = resultRow[UserTable.userImageUrl]?.let { "http://192.168.1.15:8080/$it" },
+            userImageUrl = resultRow[UserTable.userImageUrl]?.let { "http://192.168.1.15:5000/$it" },
             name = resultRow[UserTable.name],
             lastMessage = resultRow[MessageTable.message],
         )
@@ -91,7 +90,7 @@ object Mapper {
                     type = LIKE_NOTIFICATION_TYPE,
                     likeCount = resultSet.getInt("count"),
                     profileName = resultSet.getString("name"),
-                    postImageUrl = "http://192.168.1.15:8080/" + resultSet.getString("image_url"),
+                    postImageUrl = "http://192.168.1.15:5000/" + resultSet.getString("image_url"),
                     time = resultSet.getObject("time").toString(),
                     postId = resultSet.getInt("pid"),
                 )
@@ -106,10 +105,10 @@ object Mapper {
         while (resultSet.next()) {
             notificationsList.add(
                 CommentNotification(
-                    type = LIKE_NOTIFICATION_TYPE,
-                    likeCount = resultSet.getInt("count"),
+                    type = COMMENT_NOTIFICATION_TYPE,
+                    commentCount = resultSet.getInt("count"),
                     profileName = resultSet.getString("name"),
-                    postImageUrl = "http://192.168.1.15:8080/" + resultSet.getString("image_url"),
+                    postImageUrl = "http://192.168.1.15:5000/" + resultSet.getString("image_url"),
                     time = resultSet.getObject("time").toString(),
                     postId = resultSet.getInt("pid"),
                 )

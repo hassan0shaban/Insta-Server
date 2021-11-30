@@ -1,7 +1,7 @@
-package com.example.dp.table
+package com.example.db.table
 
-import com.example.dp.utils.MessageFields
-import com.example.dp.utils.TableNames
+import com.example.db.utils.MessageFields
+import com.example.db.utils.TableNames
 import org.jetbrains.exposed.sql.Table
 
 object MessageTable : Table(TableNames.Message) {

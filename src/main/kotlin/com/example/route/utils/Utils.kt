@@ -1,8 +1,9 @@
-package com.example.route
+package com.example.route.utils
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.example.route.utils.Constants.`30 sec`
+import com.example.request.Username
+import com.example.route.AuthenticationParameters
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -31,4 +32,12 @@ object Utils {
         call.principal<JWTPrincipal>().let {
             it!!.payload.getClaim(AuthenticationParameters.USERNAME).asString()
         }
+
+    fun createUserJwt(audience : String, issuer : String, secret : String, username: String): String =
+        JWT.create()
+            .withAudience(audience)
+            .withIssuer(issuer)
+            .withClaim(AuthenticationParameters.USERNAME, username)
+            .withExpiresAt(Date(System.currentTimeMillis() + Constants.threeMonths))
+            .sign(Algorithm.HMAC256(secret))
 }

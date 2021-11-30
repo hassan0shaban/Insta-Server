@@ -7,7 +7,7 @@ import com.example.response.ChatResponse
 interface UserRepository {
     fun updateUsername(username: String, newUsername: String): Int
     fun getUser(username: String): User?
-    fun insertUser(email: String, password: String, name: String): Int?
+    fun insertUser(email: String, password: String, name: String): Result<Int>
     fun login(email: String, password: String): String
     fun checkUser(email: String): Int?
     fun getUserByEmail(email: String): User?

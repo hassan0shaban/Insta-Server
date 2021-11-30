@@ -1,10 +1,9 @@
-package com.example.dp.table
+package com.example.db.table
 
-import com.example.dp.utils.Fields
-import com.example.dp.utils.Fields.FOLLOWER_USERNAME
-import com.example.dp.utils.Fields.TIME
-import com.example.dp.utils.Fields.USERNAME
-import com.example.dp.utils.TableNames
+import com.example.db.utils.Fields.FOLLOWER_USERNAME
+import com.example.db.utils.Fields.TIME
+import com.example.db.utils.Fields.USERNAME
+import com.example.db.utils.TableNames
 import org.jetbrains.exposed.sql.Table
 
 object FollowRequestTable : Table(TableNames.ConnectionRequest) {

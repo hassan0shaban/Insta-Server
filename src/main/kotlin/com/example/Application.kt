@@ -2,7 +2,9 @@ package com.example
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.example.AuthMethod.API_KEY
 import com.example.AuthMethod.method
+import com.example.AuthMethod.refreshTokenMethod
 import com.example.di.mainModule
 import com.example.route.*
 import io.ktor.application.*
@@ -12,9 +14,12 @@ import io.ktor.features.*
 import io.ktor.gson.*
 import io.ktor.http.cio.websocket.*
 import io.ktor.routing.*
+import io.ktor.server.engine.*
 import io.ktor.websocket.*
+import org.joda.time.DateTime
 import org.koin.ktor.ext.Koin
 import java.time.Duration
+
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -58,6 +63,22 @@ fun Application.module() {
                     null
             }
         }
+
+        jwt(refreshTokenMethod) {
+            realm = myRealm
+            verifier(
+                JWT.require(Algorithm.HMAC256(secret))
+                    .build()
+            )
+
+            validate { credential ->
+                if (credential.payload.getClaim(AuthenticationParameters.USERNAME)
+                        .asString() != "" )
+                    JWTPrincipal(payload = credential.payload)
+                else
+                    null
+            }
+        }
     }
 
     routing {
@@ -68,8 +89,9 @@ fun Application.module() {
         likeRouting()
         connectionRouting()
         signupRouting()
+        search()
         commentRouting()
-//        webSocket()
+        experimentRouting(secret, issuer, audience)
         notificationsRouting()
         messageRouting()
         followRequestRouting()
@@ -77,5 +99,7 @@ fun Application.module() {
 }
 
 object AuthMethod {
+    const val API_KEY: String = "api-key"
     const val method = "auth-jwt"
+    const val refreshTokenMethod = "refresh-jwt"
 }

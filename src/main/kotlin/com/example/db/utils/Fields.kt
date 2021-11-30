@@ -1,4 +1,4 @@
-package com.example.dp.utils
+package com.example.db.utils
 
 object Fields {
     const val FOLLOWER_USERNAME = "follower_username"

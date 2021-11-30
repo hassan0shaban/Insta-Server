@@ -1,17 +1,13 @@
 package com.example.repo
 
-import com.example.dp.table.*
+import com.example.db.table.*
 import com.example.maper.Mapper
 import com.example.maper.Mapper.connectionFromResultRow
-import com.example.maper.Mapper.followRequestFromResultRow
 import com.example.maper.Mapper.userFromResultRow
 import com.example.model.Connection
 import com.example.model.FollowRequest
 import com.example.model.User
-import com.example.response.ChatResponse
-import com.example.response.ConnectionResponse
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
@@ -161,18 +157,17 @@ class UserRepositoryImpl(
                 }
         }
 
-    override fun insertUser(email: String, password: String, name: String): Int? {
-        return transaction {
+    override fun insertUser(email: String, password: String, name: String): Result<Int> = kotlin.runCatching {
+        transaction {
             UserTable.insert {
                 it[this.email] = email
                 it[this.password] = password
                 it[this.name] = name
-            }.getOrNull(UserTable.uid)
-                ?.also { uid ->
-                    UserTable.update({ UserTable.uid eq uid }) {
-                        it[username] = uid.toString()
-                    }
+            }.get(UserTable.uid).also { uid ->
+                UserTable.update(where = { UserTable.uid eq uid }) {
+                    it[username] = uid.toString()
                 }
+            }
         }
     }
 

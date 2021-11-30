@@ -1,6 +1,7 @@
 package com.example.route
 
 import com.example.AuthMethod
+import com.example.route.utils.Utils
 import com.example.service.UserService
 import io.ktor.application.*
 import io.ktor.auth.*

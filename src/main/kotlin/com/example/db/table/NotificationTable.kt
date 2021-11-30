@@ -1,8 +1,7 @@
-package com.example.dp.table
+package com.example.db.table
 
-import com.example.dp.utils.CommentFields
-import com.example.dp.utils.NotificationsFields
-import com.example.dp.utils.TableNames
+import com.example.db.utils.NotificationsFields
+import com.example.db.utils.TableNames
 import org.jetbrains.exposed.sql.Table
 
 object NotificationTable : Table(TableNames.Notifications) {

@@ -7,6 +7,7 @@ import com.example.repo.PostRepository
 import com.example.repo.UserRepository
 import com.example.request.CreateUserByEmailRequest
 import com.example.request.LikeRequest
+import com.example.response.FacebookProfileResponse
 
 class UserService(
     private val userRepository: UserRepository,
@@ -22,7 +23,12 @@ class UserService(
     }
 
     fun insertUser(request: CreateUserByEmailRequest): Int? =
-        userRepository.insertUser(email = request.email, password = request.password, name = request.name)
+        userRepository
+            .insertUser(email = request.email, password = request.password, name = request.name)
+            .getOrElse {
+                it.printStackTrace()
+                null
+            }
 
     fun getUserByEmail(email: String): User? =
         userRepository.getUserByEmail(email)
@@ -77,4 +83,16 @@ class UserService(
 
     fun updateName(username: String, name: String): Boolean =
         userRepository.updateName(username, name) > 0
+
+    fun insertUser(request: FacebookProfileResponse, password: String) =
+        userRepository
+            .insertUser(email = request.email, password = password, name = request.name)
+            .getOrElse {
+                it.printStackTrace()
+                null
+            }
+
+    fun checkEmail(email: String): Boolean =
+        userRepository
+            .getUserByEmail(email) != null
 }

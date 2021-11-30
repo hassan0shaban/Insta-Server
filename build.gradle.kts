@@ -8,6 +8,10 @@ plugins {
     application
     kotlin("jvm") version "1.5.31"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.6.0-RC"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("com.google.cloud.tools.appengine") version "2.4.2"
+    id("org.gretty") version ("3.0.6")
+    id("war")
 }
 
 group = "com.example"
@@ -15,11 +19,31 @@ version = "0.0.1"
 application {
     mainClass.set("com.example.ApplicationKt")
 }
-
 repositories {
     mavenCentral()
 }
+appengine {
+    stage {
+        setArtifact("build/libs/${project.name}-${project.version}-all.jar")
+    }
+    deploy {
+        version = "GCLOUD_CONFIG"
+        projectId = "GCLOUD_CONFIG"
+    }
+}
+tasks {
+    shadowJar {
+        manifest {
+            attributes(Pair("Main-Class", "com.example.ApplicationKt"))
+        }
+    }
+}
 
+gretty {
+    servletContainer = "tomcat9"
+    contextPath = '/'
+    logbackConfigFile = "src/main/resources/logback.xml"
+}
 dependencies {
     implementation("io.ktor:ktor-server-core:$ktor_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
@@ -29,6 +53,9 @@ dependencies {
 
     // gson
     implementation("io.ktor:ktor-gson:$ktor_version")
+
+    //servlet
+    implementation("io.ktor:ktor-server-servlet:$ktor_version")
 
     // Koin
     testImplementation("io.insert-koin:koin-test:$koin_version")

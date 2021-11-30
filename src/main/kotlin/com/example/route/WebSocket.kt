@@ -1,13 +1,10 @@
 package com.example.route
 
 import com.example.AuthMethod
+import com.example.route.utils.Utils
 import io.ktor.routing.*
-import io.ktor.http.*
-import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.cio.websocket.*
-import io.ktor.response.*
-import io.ktor.request.*
 import io.ktor.websocket.*
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger

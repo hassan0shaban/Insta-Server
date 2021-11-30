@@ -30,14 +30,41 @@ class NotificationRepositoryImplTest : KoinTest {
                 .getLikeNotifications(username = "5", limit = 50)
         }.let {
             it.onSuccess {
-                Truth.assertThat(it.size).isEqualTo(2)
                 it.forEach {
-                    println(it)
+                    println(it.time)
                 }
             }
             it.onFailure {
                 it.printStackTrace()
             }
+        }
+    }
+
+    @Test
+    fun getLikeNotifications() = runBlockingTest {
+        runBlocking {
+            notificationRepository
+                .getLikeNotifications(username = "5", limit = 50)
+        }.onSuccess {
+            it.forEach {
+                println(it.time)
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }
+    }
+
+    @Test
+    fun getCommentNotifications() = runBlockingTest {
+        runBlocking {
+            notificationRepository
+                .getCommentNotifications(username = "5", limit = 50)
+        }.onSuccess {
+            it.forEach {
+                println(it)
+            }
+        }.onFailure {
+            it.printStackTrace()
         }
     }
 }

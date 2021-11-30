@@ -1,4 +1,4 @@
-package com.example.dp.utils
+package com.example.db.utils
 
 object LikeFields {
     const val pid = "pid"

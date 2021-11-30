@@ -1,6 +1,9 @@
 use social_media;
 
 
+SELECT user,authentication_string,plugin,host FROM mysql.user;
+
+ALTER TABLE market.product alter adding_time SET DEFAULT ;
 
 delete
 from post
@@ -33,6 +36,12 @@ where (sender = '5' and receiver = '5')
    or (receiver = '5' and sender = '5')
 order by time desc
 limit 1;
+
+
+SELECT *
+from post inner join user
+
+where (user.username = post.username and post.caption like '%hassan%');
 
 
 SELECT name, post.image_url, post.pid, (count(`like`.username) - 1) as count, max(`like`.time) as time

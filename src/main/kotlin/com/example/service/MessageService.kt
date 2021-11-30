@@ -1,7 +1,5 @@
 package com.example.service
 
-import com.example.ChatMessage
-import com.example.dp.table.MessageTable
 import com.example.repo.MessageRepository
 import com.example.request.MessageInsertRequest
 import com.example.response.ChatResponse
@@ -68,7 +66,7 @@ class MessageService(
                 return@let it
             }
 
-    fun insertMessage(message: ChatMessage) =
+    fun insertMessage(message: MessageInsertRequest) =
         messageRepository
             .insertMessage(message)
             .getOrElse {

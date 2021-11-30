@@ -1,6 +1,5 @@
 package com.example.repo
 
-import com.example.ChatMessage
 import com.example.request.MessageInsertRequest
 import com.example.response.ChatResponse
 import com.example.response.MessageResponse
@@ -13,6 +12,6 @@ interface MessageRepository {
     fun getMessage(messageId: Int, username: String): Result<MessageResponse?>
     fun getMessages(username: String, connection: String): Result<List<MessageResponse>>
     fun getChats(username: String): Result<List<ChatResponse>>
-    fun insertMessage(request: ChatMessage): Result<InsertStatement<Number>>
+    fun insertMessage(request: MessageInsertRequest): Result<InsertStatement<Number>>
     fun getLastMessage(username: String, connection: String): Result<MessageResponse?>
 }

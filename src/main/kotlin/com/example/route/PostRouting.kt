@@ -4,11 +4,11 @@ import com.example.AuthMethod
 import com.example.route.Parameters.IMAGE_NAME
 import com.example.route.Parameters.PID
 import com.example.route.Parameters.USERNAME
+import com.example.route.utils.Utils.getUsername
 import com.example.service.PostService
 import com.example.utils.Paths.POSTS_IMAGES_PATH
 import io.ktor.application.*
 import io.ktor.auth.*
-import io.ktor.auth.jwt.*
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.request.*
@@ -16,6 +16,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import org.koin.ktor.ext.inject
 import java.io.File
+import kotlin.math.min
 
 fun Route.postRouting() {
 
@@ -23,24 +24,36 @@ fun Route.postRouting() {
 
     authenticate(AuthMethod.method) {
         get("/{$USERNAME}/posts") {
+            val page = call.parameters.get("page")?.toInt().takeIf { (it ?: 0) > 0 } ?: 1
+            val pageSize = call.parameters.get("page-size")?.toInt().takeIf { (it ?: 0) > 0 } ?: 25
+
             val username = call.parameters[USERNAME] ?: kotlin.run {
                 call.respond(message = "username is not correct", status = HttpStatusCode.BadRequest)
                 return@get
             }
 
+            val posts = postService.getUserPosts(username, page, pageSize)
+
             call.respond(
-                message = postService.getUserPosts(username),
-                status = HttpStatusCode.OK
+                if (page <= 1) {
+                    posts.subList(0, min(posts.size, pageSize))
+                } else if (posts.size < page * pageSize) {
+                    emptyList()
+                } else {
+                    posts.subList((page - 1) * pageSize, min(posts.size, page * pageSize))
+                }
             )
         }
     }
 
     authenticate(AuthMethod.method) {
         get("/profile/posts") {
-            val username = Utils.getUsername(call)
+            val username = getUsername(call)
+            val page = call.parameters.get("page")?.toInt() ?: 1
+            val pageSize = call.parameters.get("page-size")?.toInt() ?: 25
 
             call.respond(
-                message = postService.getUserPosts(username),
+                message = postService.getUserPosts(username, page, pageSize),
                 status = HttpStatusCode.OK
             )
         }
@@ -59,10 +72,7 @@ fun Route.postRouting() {
             }
 
             call.respond(
-                message = post.apply {
-//                    TODO change base URL
-                    post.post.postImageUrl = "http://localhost:8080/${post.post.postImageUrl}"
-                },
+                message = post,
                 status = HttpStatusCode.OK
             )
         }
@@ -120,34 +130,34 @@ fun Route.postRouting() {
 
     authenticate(AuthMethod.method) {
         post("/post") {
-            var imageBytes: ByteArray? = null
-            var caption: String? = null
+
+            val parts = HashMap<String, Any?>()
+
             call.receiveMultipart().forEachPart { part ->
                 when (part) {
                     is PartData.FormItem -> {
-                        caption = part.value
+                        parts.put(part.name!!, part.value)
                     }
                     is PartData.FileItem -> {
-                        imageBytes = part.streamProvider().readBytes()
+                        parts.put(part.name!!, part.streamProvider().readBytes())
                     }
                 }
             }
 
-            if (imageBytes == null || caption == null) {
+            if (parts.values.any { it == null }) {
                 call.respond(message = "uncompleted info", status = HttpStatusCode.BadRequest)
                 return@post
             }
 
-            val principal = call.principal<JWTPrincipal>()
-            val username = principal!!.payload.getClaim(AuthenticationParameters.USERNAME).asString()
+            val username = getUsername(call)
 
-            val pid = postService.insertPost(caption!!, "imageUrl", username) ?: kotlin.run {
+            val pid = postService.insertPost(parts, username) ?: kotlin.run {
                 call.respond(message = "cannot create post", status = HttpStatusCode.ExpectationFailed)
                 return@post
             }
 
             val imageUrl = "$POSTS_IMAGES_PATH/$pid.jpg"
-            File(imageUrl).writeBytes(imageBytes!!)
+            File(imageUrl).writeBytes(parts.get("image") as ByteArray)
 
             postService.updatePostImageUrl(pid, imageUrl).let {
                 if (it > 0)
@@ -162,11 +172,24 @@ fun Route.postRouting() {
     }
 
     get("user/{username}/posts") {
-        val username = call.parameters.get("username")
-        if (username == null)
-            call.respond(message = "null", status = HttpStatusCode.BadRequest).also { return@get }
+        val page = call.parameters.get("page")?.toInt().takeIf { (it ?: 0) > 0 } ?: 1
+        val pageSize = call.parameters.get("page-size")?.toInt().takeIf { (it ?: 0) > 0 } ?: 25
 
-        val posts = postService.getUserPosts(username!!)
-        call.respond(message = posts, status = HttpStatusCode.OK)
+        val username = call.parameters[USERNAME] ?: kotlin.run {
+            call.respond(message = "username is not correct", status = HttpStatusCode.BadRequest)
+            return@get
+        }
+
+        val posts = postService.getUserPosts(username, page, pageSize)
+
+        call.respond(
+            if (page <= 1) {
+                posts.subList(0, min(posts.size, pageSize))
+            } else if (posts.size < page * pageSize) {
+                emptyList()
+            } else {
+                posts.subList((page - 1) * pageSize, min(posts.size, page * pageSize))
+            }
+        )
     }
 }

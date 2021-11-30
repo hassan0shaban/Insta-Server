@@ -1,10 +1,7 @@
 package com.example.repo
 
-import com.example.dp.table.CommentTable
-import com.example.dp.table.LikeTable
+import com.example.db.table.CommentTable
 import com.example.request.CommentRequest
-import com.example.request.LikeRequest
-import com.example.utils.TimeFormatter
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert

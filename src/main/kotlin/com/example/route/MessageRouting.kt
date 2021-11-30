@@ -2,8 +2,8 @@ package com.example.route
 
 import com.example.AuthMethod
 import com.example.request.MessageInsertRequest
-import com.example.response.MessageResponse
-import com.example.route.Utils.getUsername
+import com.example.route.utils.Utils
+import com.example.route.utils.Utils.getUsername
 import com.example.service.MessageService
 import com.google.gson.Gson
 import io.ktor.application.*

@@ -1,7 +1,7 @@
-package com.example.dp.table
+package com.example.db.table
 
-import com.example.dp.utils.CommentFields
-import com.example.dp.utils.TableNames
+import com.example.db.utils.CommentFields
+import com.example.db.utils.TableNames
 import org.jetbrains.exposed.sql.Table
 
 object CommentTable : Table(TableNames.Comment) {

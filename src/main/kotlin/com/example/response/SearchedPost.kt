@@ -1,10 +1,11 @@
-package com.example.model
+package com.example.response
 
-data class Post(
+data class SearchedPost(
     val postId: Int,
     val caption: String,
     val username: String,
+    val profileName: String,
     var postImageUrl: String,
     val time: String,
-    val type: Int,
+    val userImageUrl: String? = null,
 )

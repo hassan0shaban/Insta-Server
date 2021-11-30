@@ -1,4 +1,4 @@
-package com.example.dp.utils
+package com.example.db.utils
 
 object ConnectionFields {
     const val user1 = "user1"

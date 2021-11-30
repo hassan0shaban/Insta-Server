@@ -1,4 +1,4 @@
-package com.example.dp.utils
+package com.example.db.utils
 
 object NotificationsFields {
     const val notificationType = "not_id"

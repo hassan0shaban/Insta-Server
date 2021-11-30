@@ -2,7 +2,7 @@ package com.example.route
 
 import com.example.request.CreateUserByEmailRequest
 import com.example.route.LoginMethods.EMAIL
-import com.example.route.LoginMethods.FACEBOOK
+import com.example.route.LoginMethods.GOOGLE
 import com.example.route.Routing.SIGNUP
 import com.example.service.UserService
 import io.ktor.application.*
@@ -42,7 +42,9 @@ fun Route.signupRouting() {
         call.respond(message = username, status = HttpStatusCode.OK)
     }
 
-    post("$SIGNUP/$FACEBOOK") {
+
+
+    post("$SIGNUP/$GOOGLE") {
         val userId = call.request.headers.get(Parameters.UID) ?: kotlin.run {
             call.respond(message = "must pass the uid", status = HttpStatusCode.BadRequest)
             return@post
