@@ -1,4 +1,5 @@
 val ktor_version: String by project
+val appengine_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
 val exposed_version: String by project
@@ -22,15 +23,6 @@ application {
 repositories {
     mavenCentral()
 }
-appengine {
-    stage {
-        setArtifact("build/libs/${project.name}-${project.version}-all.jar")
-    }
-    deploy {
-        version = "GCLOUD_CONFIG"
-        projectId = "GCLOUD_CONFIG"
-    }
-}
 tasks {
     shadowJar {
         manifest {
@@ -39,11 +31,10 @@ tasks {
     }
 }
 
-gretty {
-    servletContainer = "tomcat9"
-    contextPath = '/'
-    logbackConfigFile = "src/main/resources/logback.xml"
+tasks.create("stage") {
+    dependsOn("installDist")
 }
+
 dependencies {
     implementation("io.ktor:ktor-server-core:$ktor_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
@@ -69,6 +60,8 @@ dependencies {
 
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-websockets:$ktor_version")
+
+    implementation("com.google.appengine:appengine:$appengine_version")
 
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0")
 

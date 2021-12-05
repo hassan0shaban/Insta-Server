@@ -25,7 +25,8 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 fun Application.module() {
     install(AutoHeadResponse)
-
+    install(DefaultHeaders)
+    install(CallLogging)
     install(WebSockets) {
         pingPeriod = Duration.ofSeconds(15)
         timeout = Duration.ofHours(1)
@@ -87,6 +88,7 @@ fun Application.module() {
         feedRouting()
         userRouting()
         likeRouting()
+        root()
         connectionRouting()
         signupRouting()
         search()
