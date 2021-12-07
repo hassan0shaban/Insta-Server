@@ -1,4 +1,4 @@
-rootProject.name = "Insta Server"
+rootProject.name = "ktor-insta-server"
 pluginManagement {
     repositories {
         gradlePluginPortal()
